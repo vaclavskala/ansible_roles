@@ -1,0 +1,25 @@
+- name: Install base packages for arch
+  pacman:
+    name:
+      - base
+      - base-devel
+      - sudo
+      - nano
+      - git
+      - vim
+      - net-tools
+      - python
+      - htop
+      - iotop
+      - zsh
+      - sysstat
+      - tcpdump
+      - man
+      - ncdu
+      - lsof
+      - screen
+      - tmux
+      - zstd
+      - grc
+      - pacman-contrib
+    state: present

@@ -1,0 +1,31 @@
+- name: Enable EPEL repo
+  copy:
+    src: ol8-epel.repo
+    dest: /etc/yum.repos.d/ol8-epel.repo
+    owner: root
+    group: root
+    mode: '600'
+
+- name: Install base packages for rhel
+  dnf:
+    name:
+      - sudo
+      - e2fsprogs
+      - nano
+      - git
+      - vim
+      - net-tools
+      - python3
+      - htop
+      - iotop
+      - zsh
+      - sysstat
+      - tcpdump
+      - man
+      - ncdu
+      - lsof
+      - screen
+      - tmux
+      - unzip
+      - zstd
+    state: present

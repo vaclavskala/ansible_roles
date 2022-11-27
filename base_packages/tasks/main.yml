@@ -1,0 +1,17 @@
+- name: Install base packages for Archlinux
+  include_tasks: install_packages_arch.yml
+  when: ansible_facts.distribution == 'Archlinux'
+
+- name: Install base packages Ubuntu
+  include_tasks: install_packages_ubuntu.yml
+  when: ansible_facts.distribution == 'Ubuntu'
+
+- name: Install base packages RedHat
+  include_tasks: install_packages_rhel.yml
+  when: ansible_facts.os_family == 'RedHat'
+
+- name: Nano enable syntax highlight
+  lineinfile:
+    path: /etc/nanorc
+    regexp: 'include /usr/share/nano/'
+    line: 'include /usr/share/nano/*.nanorc'

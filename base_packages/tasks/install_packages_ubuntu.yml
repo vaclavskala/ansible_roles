@@ -1,0 +1,22 @@
+- name: Install base packages for ubuntu
+  apt:
+    pkg:
+      - nano
+      - sudo
+      - git
+      - vim
+      - net-tools
+      - python
+      - htop
+      - iotop
+      - sysstat
+      - tcpdump
+      - man
+      - ncdu
+      - lsof
+      - screen
+      - tmux
+      - gpg
+      - curl
+      - zstd
+    state: present
