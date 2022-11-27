@@ -1,0 +1,19 @@
+- name: Install haveged
+  package:
+    name:
+      - haveged
+    state: present
+
+- name: Start haveged
+  systemd:
+    name: haveged
+    state: started
+    enabled: true
+
+- name: Set haveged low watermark
+  lineinfile:
+    path: /etc/default/haveged
+    regexp: 'DAEMON_ARGS='
+    line: 'DAEMON_ARGS="-w 2048"'
+  notify: Reload haveged
+  when: ansible_facts.distribution == 'Ubuntu'

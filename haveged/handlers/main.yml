@@ -1,0 +1,5 @@
+- name: Reload haveged
+  systemd:
+    name: haveged
+    state: restarted
+    enabled: true
