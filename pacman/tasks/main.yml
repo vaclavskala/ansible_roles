@@ -1,0 +1,23 @@
+- name: Enable color pacman output
+  lineinfile:
+    path: /etc/pacman.conf
+    regexp: '#Color'
+    line: 'Color'
+
+- name: Enable verbose pacman output
+  lineinfile:
+    path: /etc/pacman.conf
+    regexp: '#VerbosePkgLists'
+    line: 'VerbosePkgLists'
+
+- name: Enable parallel download
+  lineinfile:
+    path: /etc/pacman.conf
+    regexp: 'ParallelDownloads'
+    line: 'ParallelDownloads = 5'
+
+- name: Enable pacman cache cleaner
+  systemd:
+    name: paccache.timer
+    state: started
+    enabled: true
