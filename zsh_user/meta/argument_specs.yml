@@ -1,0 +1,12 @@
+argument_specs:
+  main:
+    short_description: Parameters for zsh_user role
+    options:
+      zsh_user:
+        type: "str"
+        required: true
+        description: "Name of user"
+      zsh_home:
+        type: "str"
+        required: true
+        description: "Home of user"

@@ -1,0 +1,23 @@
+- name: Create .zsh directory
+  ansible.builtin.file:
+    path: "{{ zsh_home }}/.zsh"
+    state: directory
+    owner: "{{ zsh_user }}"
+    group: "{{ zsh_user }}"
+    mode: '0755'
+
+- name: Copy user .zshrc
+  copy:
+    src: zshrc
+    dest: "{{ zsh_home }}/.zshrc"
+    owner: "{{ zsh_user }}"
+    group: "{{ zsh_user }}"
+    mode: '0644'
+
+- name: Copy aliases
+  copy:
+    src: aliases
+    dest: "{{ zsh_home }}/.zsh/aliases"
+    owner: "{{ zsh_user }}"
+    group: "{{ zsh_user }}"
+    mode: '0644'
