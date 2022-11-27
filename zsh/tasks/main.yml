@@ -1,0 +1,33 @@
+- name: Instal packages
+  package:
+    name:
+      - zsh
+      - tar
+
+- name: Check if grml-zsh config exist
+  stat:
+    path: /etc/zsh/zshrc
+  register: grml_zsh_config
+
+- name: Install grml-zsh-config for arch
+  pacman:
+    name: grml-zsh-config
+    state: present
+  when:
+    - ansible_facts.distribution == 'Archlinux'
+    - not grml_zsh_config.stat.exists
+
+- name: Download grml-zsh config
+  unarchive:
+    src: https://www.archlinux.org/packages/extra/any/grml-zsh-config/download/
+    dest: /
+    remote_src: true
+  when:
+    - ansible_facts.distribution != 'Archlinux'
+    - not grml_zsh_config.stat.exists
+
+- name: Symlink zshrc
+  file:
+    src: "/etc/zsh/zshrc"
+    dest: "/etc/zshrc"
+    state: link
