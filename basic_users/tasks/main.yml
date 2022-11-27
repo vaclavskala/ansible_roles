@@ -1,0 +1,29 @@
+- name: Create group sudo
+  group:
+    name: sudo
+    state: present
+
+- name: "Create group {{ default_user }}"
+  group:
+    name: "{{ default_user }}"
+    state: present
+
+- name: "Create user {{ default_user }}"
+  user:
+    name: "{{ default_user }}"
+    groups: "sudo, {{ default_user }}"
+    shell: "{{ default_shell }}"
+
+- name: Allow sudo group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%sudo'
+    line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+
+- name: Delete unused users
+  user:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ users_to_remove }}"

@@ -1,0 +1,7 @@
+default_user: "skala"
+
+default_shell: "/bin/zsh"
+
+users_to_remove:
+  - "ubuntu"
+  - "alarm"

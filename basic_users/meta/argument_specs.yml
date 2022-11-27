@@ -1,0 +1,21 @@
+argument_specs:
+  main:
+    short_description: Parameters for basic_users role
+    options:
+      default_user:
+        type: "str"
+        required: false
+        default: "skala"
+        description: "Default admin user"
+      default_shell:
+        type: "str"
+        required: false
+        description: "Default shell for user"
+      users_to_remove:
+        type: "list"
+        elements: "str"
+        required: false
+        default:
+          - "ubuntu"
+          - "alarm"
+        description: "Users to remove"

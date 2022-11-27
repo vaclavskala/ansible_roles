@@ -1,0 +1,5 @@
+dependencies:
+  - role: zsh_user
+    zsh_user: "{{ default_user }}"
+    zsh_home: "/home/{{ default_user }}"
+    when: default_shell == '/bin/zsh'
