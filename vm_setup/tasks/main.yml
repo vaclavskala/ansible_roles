@@ -1,0 +1,40 @@
+- name: Check if qemu guest enabled
+  stat:
+    path: /dev/virtio-ports/org.qemu.guest_agent.0
+  register: qemu_guest_socket
+
+- name: Install if qemu_guest_socket exist
+  block:
+    - name: Instal qemu guest agent
+      package:
+        name:
+        - qemu-guest-agent
+        state: present
+
+    - name: Start qemu guest agent
+      systemd:
+        name: qemu-guest-agent
+        state: started
+        enabled: yes
+
+    - name: Copy hotadd rules
+      copy:
+        src: 50-hotadd.rules
+        dest: /etc/udev/rules.d/50-hotadd.rules
+        owner: root
+        group: root
+
+    - name: Set grub config
+      lineinfile:
+        path: /etc/default/grub
+        regexp: 'GRUB_CMDLINE_LINUX='
+        line: 'GRUB_CMDLINE_LINUX="memhp_default_state=online"'
+      notify: Regenerate grub config
+
+    - name: Set grub config
+      lineinfile:
+        path: /etc/default/grub
+        regexp: 'GRUB_CMDLINE_LINUX_DEFAULT='
+        line: 'GRUB_CMDLINE_LINUX_DEFAULT="net.ifnames=0 biosdevname=0 iommu=soft"'
+      notify: Regenerate grub config
+  when: qemu_guest_socket.stat.exists
