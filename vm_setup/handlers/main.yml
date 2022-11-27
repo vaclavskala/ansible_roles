@@ -1,3 +1,2 @@
 - name: Regenerate grub config
-  shell:
-    cmd: 'update-grub'
+  command: 'grub-mkconfig -o /boot/grub/grub.cfg'

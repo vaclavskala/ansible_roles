@@ -4,23 +4,25 @@
   register: qemu_guest_socket
 
 - name: Install if qemu_guest_socket exist
+  when: qemu_guest_socket.stat.exists
   block:
     - name: Instal qemu guest agent
       package:
         name:
-        - qemu-guest-agent
+          - qemu-guest-agent
         state: present
 
     - name: Start qemu guest agent
       systemd:
         name: qemu-guest-agent
         state: started
-        enabled: yes
+        enabled: true
 
     - name: Copy hotadd rules
       copy:
         src: 50-hotadd.rules
         dest: /etc/udev/rules.d/50-hotadd.rules
+        mode: "600"
         owner: root
         group: root
 
@@ -37,4 +39,3 @@
         regexp: 'GRUB_CMDLINE_LINUX_DEFAULT='
         line: 'GRUB_CMDLINE_LINUX_DEFAULT="net.ifnames=0 biosdevname=0 iommu=soft"'
       notify: Regenerate grub config
-  when: qemu_guest_socket.stat.exists
