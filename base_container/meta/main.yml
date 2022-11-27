@@ -1,0 +1,8 @@
+dependencies:
+  - role: base_packages
+  - role: ssh
+  - role: basic_users
+  - role: unattended_upgrade
+    when: ansible_facts.distribution == 'Ubuntu'
+  - role: pacman
+    when: ansible_facts.distribution == 'Archlinux'
