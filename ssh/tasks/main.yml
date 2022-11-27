@@ -1,0 +1,36 @@
+- name: Include install sshd task
+  include_tasks: install_sshd_arch.yml
+  when: ansible_facts.distribution == 'Archlinux'
+
+- name: Include install sshd task
+  include_tasks: install_sshd_ubuntu.yml
+  when: ansible_facts.distribution == 'Ubuntu'
+
+- name: Include install sshd task
+  include_tasks: install_sshd_rhel.yml
+  when: ansible_facts.os_family == 'RedHat'
+
+- name: Prohibit password login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    state: present
+    regexp: 'PasswordAuthentication '
+    line: 'PasswordAuthentication no'
+    validate: '/usr/sbin/sshd -T -f %s'
+  notify: Reload sshd
+
+- name: Prohibit root login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    state: present
+    regexp: 'PermitRootLogin '
+    line: 'PermitRootLogin no'
+    validate: '/usr/sbin/sshd -T -f %s'
+  notify: Reload sshd
+
+- name: Start sshd
+  systemd:
+    name: sshd
+    state: started
+    enabled: true
+    masked: false
