@@ -1,0 +1,17 @@
+- name: Copy tunning rules
+  copy:
+    src: 60-tunning.conf
+    dest: /etc/sysctl.d/60-tunning.conf
+    mode: "600"
+    owner: root
+    group: root
+  notify: Apply sysctl
+
+- name: Copy hardening rules
+  copy:
+    src: 60-tunning.conf
+    dest: /etc/sysctl.d/60-hardening.conf
+    mode: "600"
+    owner: root
+    group: root
+  notify: Apply sysctl
