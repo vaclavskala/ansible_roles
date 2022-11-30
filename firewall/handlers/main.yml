@@ -1,0 +1,6 @@
+- name: Restart nftables
+  systemd:
+    name: nftables
+    state: restarted
+    enabled: true
+    masked: false
