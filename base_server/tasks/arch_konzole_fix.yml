@@ -1,0 +1,13 @@
+- name: Install terminus-font package
+  pacman:
+    name:
+      - terminus-font
+    state: present
+
+- name: Copy vconsole conf
+  copy:
+    src: 'vconsole.conf'
+    dest: '/etc/vconsole.conf'
+    owner: root
+    group: root
+    mode: "600"

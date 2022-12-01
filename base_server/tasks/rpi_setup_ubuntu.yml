@@ -1,0 +1,11 @@
+- name: Install packages for raspberry
+  apt:
+    pkg:
+      - libraspberrypi-bin
+    state: present
+
+- name: Remove snapd
+  apt:
+    pkg:
+      - snapd
+    state: absent

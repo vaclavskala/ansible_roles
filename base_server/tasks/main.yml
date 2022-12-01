@@ -1,0 +1,7 @@
+- name: Include task for raspberry
+  include_tasks: rpi_setup_ubuntu.yml
+  when: "'raspberry' in group_names"
+
+- name: Fix console on arch
+  include_tasks: arch_konzole_fix.yml
+  when: ansible_facts.distribution == 'Archlinux'
