@@ -1,0 +1,10 @@
+- name: Assert wireguard_address is IP address
+  assert:
+    that:
+      - "wireguard_address | ansible.netcommon.ipaddr"
+
+- name: Assert port number is in range of unix ports
+  assert:
+    that:
+      - "wireguard_port > 0"
+      - "wireguard_port < 65535"

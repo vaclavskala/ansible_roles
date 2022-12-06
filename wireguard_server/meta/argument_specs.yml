@@ -1,0 +1,33 @@
+argument_specs:
+  main:
+    short_description: Parameters for wireguard role
+    options:
+      wireguard_address:
+        type: "str"
+        required: true
+        description: "Wireguard private IP"
+      wireguard_port:
+        type: "int"
+        required: false
+        default: 51820
+        description: "Listening port for wireguard"
+      wireguard_interface_name:
+        type: "str"
+        required: false
+        default: "wg-test"
+        description: "Name of wg interface"
+      wireguard_chroot_enabled:
+        type: "bool"
+        required: false
+        default: false
+        description: "If assign interface to network namespace"
+      wireguard_chroot_user:
+        type: "str"
+        required: false
+        default: "nobody"
+        description: "Which network namespace use"
+      wireguard_manage_firewall:
+        type: "bool"
+        required: false
+        default: "true"
+        description: "If set firewall rule to allow all trafic form wireguard"

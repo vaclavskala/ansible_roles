@@ -1,0 +1,27 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: Create wireguard server configuration
+  ansible.builtin.blockinfile:
+    path: "{{ '/etc/wireguard/' + wireguard_interface_name + '/config' }}"
+    marker: "### {mark} SERVER BLOCK"
+    create: true
+    block: |
+      [Interface]
+      Address = {{ wireguard_address }}
+      SaveConfig = false
+      ListenPort = {{ wireguard_port }}
+      PrivateKey = {{ wireguard_privkey }}
+      {% if wireguard_chroot_enabled == true %}
+      PostUp = if [[ ! -f /run/netns/{{ wireguard_chroot_user }} ]]; then ip netns add {{ wireguard_chroot_user }}; fi && ip link set %i netns {{ wireguard_chroot_user }} && ip -n {{ wireguard_chroot_user }} address add {{ wireguard_address }} dev %i && ip -n {{ wireguard_chroot_user }} link set %i up
+      {% endif %}
+    owner: root
+    group: root
+    mode: 0400
+  notify: Reload wireguard
+
+- name: Include post configure tasks
+  include_role:
+    name: wireguard_common
+    tasks_from: post_main
