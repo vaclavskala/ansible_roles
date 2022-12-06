@@ -1,0 +1,16 @@
+[Interface]
+Address = {{ wireguard_address }}
+SaveConfig = false
+ListenPort = {{ wireguard_port }}
+PrivateKey = {{ wireguard_privkey }}
+{% if wireguard_chroot_enabled == true %}
+PostUp = if [[ ! -f /run/netns/{{ wireguard_chroot_user }} ]]; then ip netns add {{ wireguard_chroot_user }}; fi && ip link set %i netns {{ wireguard_chroot_user }} && ip -n {{ wireguard_chroot_user }} address add {{ wireguard_address }} dev %i && ip -n {{ wireguard_chroot_user }} link set %i up
+{% endif %}
+
+[Peer]
+PublicKey = {{ wireguard_peer_key }}
+AllowedIPs = {{ wireguard_forward }}
+Endpoint = {{ wireguard_endpoint_ip }}:{{wireguard_endpoint_port }}
+{% if wireguard_ping == true %}
+PersistentKeepalive = {{ wireguard_ping_timeout }}
+{% endif %}

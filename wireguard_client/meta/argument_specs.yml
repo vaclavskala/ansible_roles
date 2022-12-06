@@ -1,0 +1,58 @@
+argument_specs:
+  main:
+    short_description: Parameters for wireguard role
+    options:
+      wireguard_address:
+        type: "str"
+        required: true
+        description: "Wireguard private IP"
+      wireguard_peer_key:
+        type: "str"
+        required: true
+        description: "Public key of peer"
+      wireguard_forward:
+        type: "str"
+        required: true
+        description: "IP ranges which forward to wg interface"
+      wireguard_endpoint_ip:
+        type: "str"
+        required: true
+        description: "IP of endpoint"
+      wireguard_endpoint_port:
+        type: "int"
+        required: true
+        description: "port of endpoint"
+      wireguard_port:
+        type: "int"
+        required: false
+        default: 51820
+        description: "Listening port for wireguard"
+      wireguard_ping:
+        type: "bool"
+        required: false
+        default: true
+        description: "If do ping to wireguard"
+      wireguard_ping_timeout:
+        type: "int"
+        required: false
+        default: 30
+        description: "Timeout between pings"
+      wireguard_interface_name:
+        type: "str"
+        required: false
+        default: "wg-test"
+        description: "Name of wg interface"
+      wireguard_chroot_enabled:
+        type: "bool"
+        required: false
+        default: false
+      wireguard_chroot_user:
+        type: "str"
+        required: false
+        default: "nobody"
+        description: "Which namespace use"
+      wireguard_manage_firewall:
+        type: "bool"
+        required: false
+        default: "true"
+        description: "If set firewall rule to allow all trafic form wireguard"

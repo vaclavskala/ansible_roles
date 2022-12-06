@@ -1,0 +1,10 @@
+wireguard_port: 51820
+wireguard_ping_timeout: 30
+wireguard_ping: true
+wireguard_interface_name: wg-test
+wireguard_chroot_enabled: false
+wireguard_chroot_user: "nobody"
+wireguard_manage_firewall: true
+
+wireguard_pubkey: ''
+wireguard_privkey: ''

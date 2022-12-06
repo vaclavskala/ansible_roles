@@ -1,0 +1,31 @@
+- name: Assert wireguard_address is IP address
+  assert:
+    that:
+      - "wireguard_address | ansible.netcommon.ipaddr"
+
+- name: Assert wireguard_endpoint_address is IP address
+  assert:
+    that:
+      - "wireguard_endpoint_ip | ansible.netcommon.ipaddr"
+
+- name: Check if peer key length match
+  assert:
+    that:
+      - "wireguard_peer_key | b64decode | length = 32"
+
+- name: Assert wireguard_ping_timeout is bigger than zero
+  assert:
+    that:
+      - "wireguard_ping_timeout > 0"
+
+- name: Assert port number is in range of unix ports
+  assert:
+    that:
+      - "wireguard_endpoint_port > 0"
+      - "wireguard_endpoint_port < 65535"
+
+- name: Assert port number is in range of unix ports
+  assert:
+    that:
+      - "wireguard_port > 0"
+      - "wireguard_port < 65535"

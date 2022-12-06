@@ -1,0 +1,13 @@
+- name: Create wireguard server configuration
+  template:
+    src: wg.conf.j2
+    dest: "{{ '/etc/wireguard/' + wireguard_interface_name + '/config' }}"
+    owner: root
+    group: root
+    mode: '0600'
+  notify: Reload wireguard
+
+- name: Include post configure tasks
+  include_role:
+    name: wireguard_common
+    tasks_from: post_main
