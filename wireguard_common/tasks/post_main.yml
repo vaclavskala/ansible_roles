@@ -1,0 +1,26 @@
+- name: Enable wireguard configuration
+  file:
+    src: "{{ '/etc/wireguard/' + wireguard_interface_name + '/config' }}"
+    dest: "{{ '/etc/wireguard/' + wireguard_interface_name + '.conf' }}"
+    state: link
+
+- name: Start wireguard interface
+  systemd:
+    name: "{{ 'wg-quick@' + wireguard_interface_name }}"
+    state: started
+    enabled: true
+    masked: false
+
+- name: "Set firewall rule for wireguard - {{ wireguard_interface_name }}"
+  template:
+    src: nftables.j2
+    dest: "/etc/nftables/10-{{ wireguard_interface_name }}.nft"
+    owner: root
+    group: root
+    mode: '0600'
+  notify: Restart nftables
+
+- name: Unset key variables
+  set_fact:
+    wireguard_pubkey: ""
+    wireguard_privkey: ""

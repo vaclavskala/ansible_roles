@@ -1,0 +1,14 @@
+- name: Include install wireguard task
+  include_tasks: install_wireguard.yml
+
+- name: Load keys from file
+  include_tasks: load_keys.yml
+  when: wireguard_pubkey | length == 0 or wireguard_privkey | length == 0
+
+- name: Generate keys when not avaliable
+  include_tasks: generate_keys.yml
+  when: wireguard_pubkey | length == 0 or wireguard_privkey | length == 0
+
+- name: Print public key
+  debug:
+    msg: "{{ wireguard_pubkey }}"

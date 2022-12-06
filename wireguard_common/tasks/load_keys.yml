@@ -1,0 +1,17 @@
+- name: Try load pubkey from file
+  ansible.builtin.slurp:
+    src: "{{ '/etc/wireguard/' + wireguard_interface_name + '/pubkey' }}"
+  register: slurp_pubkey
+  ignore_errors: true
+
+- name: Try load privkey from file
+  ansible.builtin.slurp:
+    src: "{{ '/etc/wireguard/' + wireguard_interface_name + '/privkey' }}"
+  register: slurp_privkey
+  ignore_errors: true
+
+- name: Load keys to variables
+  set_fact:
+    wireguard_pubkey: "{{ slurp_pubkey.content | b64decode }}"
+    wireguard_privkey: "{{ slurp_privkey.content | b64decode }}"
+  when: (not slurp_pubkey.failed) and (not slurp_privkey.failed)

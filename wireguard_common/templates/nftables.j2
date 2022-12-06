@@ -1,0 +1,4 @@
+udp dport "{{ wireguard_port }}" accept comment "allow traffic for {{ wireguard_interface_name }}"
+{% if wireguard_manage_firewall == true %}
+iifname "{{ wireguard_interface_name }}" accept comment "allow from {{ wireguard_interface_name }}"
+{% endif %}

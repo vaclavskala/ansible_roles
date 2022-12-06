@@ -1,0 +1,23 @@
+- name: Creates interface config directory
+  file:
+    path: "{{ '/etc/wireguard/' + wireguard_interface_name }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "700"
+
+- name: Generate private key
+  shell: 'wg genkey > privkey'
+  args:
+    creates: 'privkey'
+    chdir: "{{ '/etc/wireguard/' + wireguard_interface_name }}"
+
+- name: Generate public key
+  shell: 'set -o pipefail && cat privkey | wg pubkey > pubkey'
+  args:
+    creates: 'pubkey'
+    chdir: "{{ '/etc/wireguard/' + wireguard_interface_name }}"
+
+
+- name: Load keys from file
+  include_tasks: load_keys.yml

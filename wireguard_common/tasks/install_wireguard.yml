@@ -1,0 +1,11 @@
+- name: Install wireguard
+  apt:
+    pkg: wireguard-tools
+    state: present
+  when: ansible_facts.distribution == 'Ubuntu'
+
+- name: Install wireguard
+  pacman:
+    name: wireguard-tools
+    state: present
+  when: ansible_facts.distribution == 'Archlinux'
