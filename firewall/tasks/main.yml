@@ -1,8 +1,8 @@
-- name: Include install sshd task
+- name: Include install nftables task
   include_tasks: install_nftables_arch.yml
   when: ansible_facts.distribution == 'Archlinux'
 
-- name: Include install sshd task
+- name: Include install nftables task
   include_tasks: install_nftables_ubuntu.yml
   when: ansible_facts.distribution == 'Ubuntu'
 
