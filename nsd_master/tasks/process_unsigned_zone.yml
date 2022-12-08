@@ -1,0 +1,22 @@
+- name: Creates directory for zone
+  file:
+    path: "/etc/nsd/data/{{ item }}/"
+    state: directory
+    owner: nsd
+    group: nsd
+    mode: '0700'
+
+- name: Copy zone files
+  template:
+    src: "./roles/nsd_master/files/zones/{{ item }}"
+    dest: "/etc/nsd/data/{{ item }}/{{ item }}.zone"
+    owner: nsd
+    group: nsd
+    mode: '0600'
+  notify: Reload nsd
+
+- name: Symlink private key for zone "{{ item }}"
+  file:
+    src: "/etc/nsd/data/{{ item }}/{{ item }}.zone"
+    dest: "/etc/nsd/zones/{{ item }}.zone"
+    state: link

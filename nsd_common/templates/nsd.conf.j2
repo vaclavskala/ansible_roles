@@ -1,0 +1,58 @@
+# See the nsd.conf(5) man page.
+#
+# See /usr/share/doc/nsd/examples/nsd.conf for a commented
+# reference config file.
+#
+
+server:
+{% for ip in nsd_ipv4_address %}
+  ip-address: {{ ip }}
+{% endfor %}
+
+{% for ip in nsd_ipv6_address %}
+  ip-address: {{ ip }} 
+{% endfor %}
+
+  port: {{ nsd_port | default(53) }}
+
+  do-ip6: yes
+
+  server-count: 1
+  hide-version: yes
+  identity: ""
+{% if nsd_status == 'MASTER' %}
+  zonesdir: "{{ zones_dir | default('/etc/nsd/zones/') }}"
+{% endif %}
+
+verbosity: 3
+
+key:
+   name: "sec_key"
+   algorithm: hmac-sha512
+   secret: "{{ nsd_secret }}"
+
+{% for zone in zones %}
+zone:
+    name: {{ zone }}
+    zonefile: {{ zone }}.zone
+{% if nsd_status == 'MASTER' %}
+    notify: {{ nsd_peer_ip }}@53 sec_key
+    provide-xfr: {{ nsd_peer_ip }} sec_key
+{% else %}
+    allow-notify: {{ nsd_peer_ip }} sec_key
+    request-xfr: AXFR {{ nsd_peer_ip }}@53 sec_key
+{% endif %}
+{% endfor %}
+
+{% for zone in signed_zones %}
+zone:
+    name: {{ zone }}
+    zonefile: {{ zone }}.zone.signed
+{% if nsd_status == 'MASTER' %}
+    notify: {{ nsd_peer_ip }}@53 sec_key
+    provide-xfr: {{ nsd_peer_ip }} sec_key
+{% else %}
+    allow-notify: {{ nsd_peer_ip }} sec_key
+    request-xfr: AXFR {{ nsd_peer_ip }}@53 sec_key
+{% endif %}
+{% endfor %}

@@ -1,0 +1,6 @@
+- name: Reload nsd
+  systemd:
+    name: nsd
+    state: reloaded
+    enabled: true
+    masked: false

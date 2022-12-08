@@ -1,0 +1,88 @@
+- name: Creates directory for zone
+  file:
+    path: "/etc/nsd/data/{{ item }}/"
+    state: directory
+    owner: nsd
+    group: nsd
+    mode: '0700'
+
+- name: Creates directory for keys
+  file:
+    path: "/etc/nsd/data/{{ item }}/keys/"
+    state: directory
+    owner: nsd
+    group: nsd
+    mode: '0700'
+
+- name: Copy zone files
+  template:
+    src: "./roles/nsd_master/files/zones_dnssec/{{ item }}"
+    dest: "/etc/nsd/data/{{ item }}/{{ item }}.zone"
+    owner: nsd
+    group: nsd
+    mode: '0600'
+
+- name: Check key for "{{ item }}"
+  find:
+    paths: "/etc/nsd/data/{{ item }}/keys/"
+    patterns: "*.key"
+  register: nsd_key_exist
+
+- name: Generate missing keys for zone "{{ item }}"
+  command: dnssec-keygen -3 -a ED448 -K "/etc/nsd/data/{{ item }}/keys/" -q "{{ item }}"
+  when: nsd_key_exist.matched == 0
+  register: nsd_key_name
+
+- name: Symlink public key for zone {{ item }}
+  file:
+    src: "/etc/nsd/data/{{ item }}/keys/{{ nsd_key_name.stdout_lines.0 }}.key"
+    dest: "/etc/nsd/data/{{ item }}/keys/{{ item }}.key"
+    state: link
+  when: nsd_key_name.changed
+  tags:
+  - skip_ansible_lint
+
+- name: Symlink private key for zone {{ item }}
+  file:
+    src: "/etc/nsd/data/{{ item }}/keys/{{ nsd_key_name.stdout_lines.0 }}.private"
+    dest: "/etc/nsd/data/{{ item }}/keys/{{ item }}.private"
+    state: link
+  when: nsd_key_name.changed
+  tags:
+  - skip_ansible_lint
+
+- name: Creates tmp directory
+  file:
+    path: "/etc/nsd/data/{{ item }}/tmp/"
+    state: directory
+    owner: nsd
+    group: nsd
+    mode: '0700'
+
+- name: Symlink zonefile for zone {{ item }}
+  file:
+    src: "/etc/nsd/data/{{ item }}/{{ item }}.zone"
+    dest: "/etc/nsd/data/{{ item }}/tmp/1-{{ item }}.zone"
+    state: link
+
+- name: Symlink public key for zone {{ item }}
+  file:
+    src: "/etc/nsd/data/{{ item }}/keys/{{ item }}.key"
+    dest: "/etc/nsd/data/{{ item }}/tmp/2-{{ item }}.key"
+    state: link
+
+- name: Assemble zonefile with key
+  ansible.builtin.assemble:
+    src: "/etc/nsd/data/{{ item }}/tmp/"
+    dest: "/etc/nsd/data/{{ item }}/{{ item }}.zone.prepared"
+    owner: nsd
+    group: nsd
+    mode: 0600
+  register: nsd_prepared_zonefile
+
+- name: Sign zone "{{ item }}"
+  command: dnssec-signzone -z -N unixtime -e +15768000 -f /etc/nsd/zones/{{ item }}.zone.signed -o {{ item }} /etc/nsd/data/{{ item }}/{{ item }}.zone.prepared /etc/nsd/data/{{ item }}/keys/{{ item }}.key
+  notify: Reload nsd
+  when: nsd_prepared_zonefile.changed
+  tags:
+  - skip_ansible_lint

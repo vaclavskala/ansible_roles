@@ -1,0 +1,45 @@
+- name: Install nsd
+  package:
+    name: nsd
+    state: present
+
+- name: Install bind-utils
+  pacman:
+    name: bind
+    state: present
+  when: ansible_facts.distribution == 'Archlinux'
+
+- name: Install bind-utils
+  apt:
+    pkg: bind9-utils
+    state: present
+  when: ansible_facts.distribution == 'Ubuntu'
+
+- name: Find unsigned zone files
+  delegate_to: localhost
+  find:
+    paths: ./roles/nsd_master/files/zones/
+  register: zone_files
+
+- name: Find signed zone files
+  delegate_to: localhost
+  find:
+    paths: ./roles/nsd_master/files/zones_dnssec/
+  register: signed_zone_files
+
+- name: Create zone list
+  set_fact:
+    zones: "{{ zone_files.files | map(attribute='path') | replace('roles/nsd_master/files/zones/', '') }}"
+
+- name: Create signed zone list
+  set_fact:
+    signed_zones: "{{ signed_zone_files.files | map(attribute='path') | replace('roles/nsd_master/files/zones_dnssec/', '') }}"
+
+- name: Create nsd.conf
+  template:
+    src: nsd.conf.j2
+    dest: /etc/nsd/nsd.conf
+    owner: nsd
+    group: nsd
+    mode: '0600'
+  notify: Reload nsd

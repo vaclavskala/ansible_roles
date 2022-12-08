@@ -1,0 +1,15 @@
+- name: Creates directory for zone files
+  file:
+    path: "{{ zones_dir | default('/etc/nsd/zones/') }}"
+    owner: nsd
+    group: nsd
+    mode: '0700'
+    state: directory
+
+- name: "Process unsigned zone {{ item }}"
+  include_tasks: process_unsigned_zone.yml
+  loop: "{{ zones }}"
+
+- name: "Process signed zone {{ item }}"
+  include_tasks: process_signed_zone.yml
+  loop: "{{ signed_zones }}"
