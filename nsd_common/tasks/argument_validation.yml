@@ -1,0 +1,22 @@
+- name: Assert nsd_ipv4_address is IP address
+  assert:
+    that:
+      - "item | ansible.netcommon.ipaddr"
+  loop: "{{ nsd_ipv4_address }}"
+
+- name: Assert nsd_ipv6_address is IP address
+  assert:
+    that:
+      - "item | ansible.netcommon.ipaddr"
+  loop: "{{ nsd_ipv6_address }}"
+
+- name: Assert nsd_peer_ip is IP address
+  assert:
+    that:
+      - "nsd_peer_ip | ansible.netcommon.ipaddr"
+
+- name: Assert port number is in range of unix ports
+  assert:
+    that:
+      - "nsd_port > 0"
+      - "nsd_port < 65535"

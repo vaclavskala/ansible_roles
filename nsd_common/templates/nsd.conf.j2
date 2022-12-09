@@ -13,7 +13,7 @@ server:
   ip-address: {{ ip }} 
 {% endfor %}
 
-  port: {{ nsd_port | default(53) }}
+  port: {{ nsd_port }}
 
   do-ip6: yes
 
@@ -21,7 +21,7 @@ server:
   hide-version: yes
   identity: ""
 {% if nsd_status == 'MASTER' %}
-  zonesdir: "{{ zones_dir | default('/etc/nsd/zones/') }}"
+  zonesdir: "{{ zones_dir }}"
 {% endif %}
 
 verbosity: 3

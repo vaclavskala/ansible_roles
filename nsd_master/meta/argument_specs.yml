@@ -1,0 +1,31 @@
+argument_specs:
+  main:
+    short_description: Parameters for nsd role
+    options:
+      nsd_ipv4_address:
+        type: "str"
+        required: false
+        default: "127.0.0.1"
+        description: "On which IPv4 listen"
+      nsd_ipv6_address:
+        type: "str"
+        required: false
+        description: "On which IPv6 listen"
+      nsd_peer_ip:
+        type: "str"
+        required: false
+        description: "Address of master or slave server"
+      nsd_port:
+        type: "int"
+        required: false
+        default: 53
+        description: "Listening port for nsd"
+      nsd_secret:
+        type: "str"
+        required: false
+        description: "Secret for replication to slave"
+      zones_dir:
+        type: "str"
+        required: false
+        default: "/etc/nsd/zones/"
+        description: "Directory for zone files"

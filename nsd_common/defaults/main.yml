@@ -1,1 +1,3 @@
 nsd_status: SLAVE
+nsd_ipv4_address: '127.0.0.1'
+nsd_port: 53

@@ -1,6 +1,6 @@
 - name: Creates directory for zone files
   file:
-    path: "{{ zones_dir | default('/etc/nsd/zones/') }}"
+    path: "{{ zones_dir }}"
     owner: nsd
     group: nsd
     mode: '0700'
