@@ -18,6 +18,5 @@
     creates: 'pubkey'
     chdir: "{{ '/etc/wireguard/' + wireguard_interface_name }}"
 
-
 - name: Load keys from file
   include_tasks: load_keys.yml
