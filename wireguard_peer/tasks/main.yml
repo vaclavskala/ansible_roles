@@ -1,0 +1,23 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: Create wireguard server configuration
+  ansible.builtin.blockinfile:
+    path: "{{ '/etc/wireguard/' + wireguard_interface_name + '/config' }}"
+    marker: "### {mark} PEER CONFIG FOR {{ wireguard_hostname }}"
+    create: true
+    block: |
+      [Peer]
+      PublicKey = {{ wireguard_peer_key }}
+      AllowedIPs = {{ wireguard_forward }}
+      {% if wireguard_endpoint_ip is defined %}
+      Endpoint = {{ wireguard_endpoint_ip }}:{{ wireguard_endpoint_port }}
+      {% endif %}
+      {% if wireguard_ping == true %}
+      PersistentKeepalive = {{ wireguard_ping_timeout }}
+      {% endif %}
+    owner: root
+    group: root
+    mode: 0400
+  notify: Reload wireguard

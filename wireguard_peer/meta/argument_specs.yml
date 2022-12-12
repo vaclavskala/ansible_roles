@@ -1,0 +1,39 @@
+argument_specs:
+  main:
+    short_description: Parameters for wireguard role
+    options:
+      wireguard_interface_name:
+        type: "str"
+        required: true
+        description: "Name of wg interface"
+      wireguard_hostname:
+        type: "str"
+        required: true
+        description: "Peer identification"
+      wireguard_peer_key:
+        type: "str"
+        required: true
+        description: "Peer public key"
+      wireguard_forward:
+        type: "str"
+        required: true
+        description: "Which IP to forward"
+      wireguard_endpoint_ip:
+        type: "str"
+        required: false
+        description: "Endpoint IP address"
+      wireguard_endpoint_port:
+        type: "int"
+        required: false
+        default: 51820
+        description: "Peer endpoint port"
+      wireguard_ping:
+        type: "bool"
+        required: false
+        default: "true"
+        description: "If send keepalive pings"
+      wireguard_ping_timeout:
+        type: "int"
+        required: false
+        default: "30"
+        description: "Pings interval"

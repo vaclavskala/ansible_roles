@@ -1,0 +1,10 @@
+- name: Assert wireguard_ping_timeout is bigger than zero
+  assert:
+    that:
+      - "wireguard_ping_timeout > 0"
+
+- name: Assert port number is in range of unix ports
+  assert:
+    that:
+      - "wireguard_endpoint_port > 0"
+      - "wireguard_endpoint_port < 65535"

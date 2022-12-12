@@ -1,0 +1,4 @@
+dependencies:
+  - role: firewall
+
+allow_duplicates: true
