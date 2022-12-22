@@ -21,6 +21,16 @@
     mode: 0400
   notify: Reload wireguard
 
+- name: Allow forward on interface
+  template:
+    src: "10-forward.j2"
+    dest: "/etc/nftables/forward/10-{{ wireguard_interface_name }}.nft"
+    owner: root
+    group: root
+    mode: 0400
+  when: wireguard_firewall_forward is true
+  notify: Restart nftables
+
 - name: Include post configure tasks
   include_role:
     name: wireguard_common

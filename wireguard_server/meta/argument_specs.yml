@@ -31,3 +31,8 @@ argument_specs:
         required: false
         default: "true"
         description: "If set firewall rule to allow all trafic form wireguard"
+      wireguard_firewall_forward:
+        type: "bool"
+        required: false
+        default: "false"
+        description: "If set firewall rule to allow forward on wireguard interface"
