@@ -14,7 +14,7 @@
 - name: "Set firewall rule for wireguard - {{ wireguard_interface_name }}"
   template:
     src: nftables.j2
-    dest: "/etc/nftables/10-{{ wireguard_interface_name }}.nft"
+    dest: "/etc/nftables/input/10-{{ wireguard_interface_name }}.nft"
     owner: root
     group: root
     mode: '0600'

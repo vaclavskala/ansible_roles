@@ -10,7 +10,19 @@
   file:
     path: /etc/nftables/
     state: directory
-    mode: 0600
+    mode: 0700
+
+- name: Creates input directory
+  file:
+    path: /etc/nftables/input
+    state: directory
+    mode: 0700
+
+- name: Creates forward directory
+  file:
+    path: /etc/nftables/forward
+    state: directory
+    mode: 0700
 
 - name: Copy basic nftables rules
   copy:
