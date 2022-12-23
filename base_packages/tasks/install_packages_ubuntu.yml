@@ -6,7 +6,7 @@
       - git
       - vim
       - net-tools
-      - python
+      - python3
       - htop
       - iotop
       - sysstat
