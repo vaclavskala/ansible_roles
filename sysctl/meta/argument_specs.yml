@@ -1,0 +1,8 @@
+argument_specs:
+  main:
+    short_description: Parameters for sysctl role
+    options:
+      sysctl_custom:
+        type: "str"
+        required: false
+        description: "Custom sysctl directives"

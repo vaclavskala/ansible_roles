@@ -15,3 +15,13 @@
     owner: root
     group: root
   notify: Apply sysctl
+
+- name: Copy custom rules
+  copy:
+    content: "{{ sysctl_custom }}"
+    dest: /etc/sysctl.d/70-custom.conf
+    mode: "600"
+    owner: root
+    group: root
+  when: sysctl_custom is defined
+  notify: Apply sysctl
