@@ -3,7 +3,7 @@
     key: virt_{{ ansible_virtualization_type }}_{{ ansible_virtualization_role }}
   changed_when: false
 
-- name: Create groups based on the machine architecture
+- name: Create groups based on distribution
   ansible.builtin.group_by:
     key: os_{{ ansible_distribution | lower }}
   changed_when: false
