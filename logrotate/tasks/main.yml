@@ -1,0 +1,11 @@
+- name: Install logrotate
+  package:
+    name:
+      - logrotate
+
+- name: Enable logrotate timer
+  systemd:
+    name: logrotate.timer
+    state: started
+    enabled: true
+    masked: false
