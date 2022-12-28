@@ -1,0 +1,79 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: Include archlinux specific variables
+  include_vars: archlinux.yml
+  when: ansible_facts.distribution == 'Archlinux'
+
+- name: Copy syslog-ng.conf
+  template:
+    src: "syslog-ng.conf.j2"
+    dest: "/etc/syslog-ng/syslog-ng.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Reload syslog-ng
+
+- name: Create conf.d directory
+  file:
+    path: "/etc/syslog-ng/conf.d/"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy forward.conf
+  template:
+    src: "forward.conf.j2"
+    dest: "/etc/syslog-ng/conf.d/forward.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  when: syslog_role == "forward"
+  notify: Reload syslog-ng
+
+- name: Loghost tasks
+  when: syslog_role == "loghost"
+  block:
+    - name: "Create {{ syslog_remote_dir }} directory"
+      file:
+        path: "{{ syslog_remote_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: 0700
+
+    - name: Copy log_host.conf
+      template:
+        src: "log-host.conf.j2"
+        dest: "/etc/syslog-ng/conf.d/log-host.conf"
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Reload syslog-ng
+
+    - name: "Open {{ syslog_transport_protocol }} port {{ syslog_port }}"
+      template:
+        src: "nftables.j2"
+        dest: "/etc/nftables/input/10-syslog-{{ syslog_interface_name }}.nft"
+        owner: root
+        group: root
+        mode: '0600'
+      notify: Restart nftables
+
+    - name: Copy syslog remote logrotate config
+      template:
+        src: "syslog-remote-logrotate.j2"
+        dest: "/etc/logrotate.d/syslog-remote"
+        owner: root
+        group: root
+        mode: '0644'
+
+- name: Copy syslog logrotate config
+  template:
+    src: "syslog-logrotate.j2"
+    dest: "/etc/logrotate.d/syslog-ng"
+    owner: root
+    group: root
+    mode: '0644'

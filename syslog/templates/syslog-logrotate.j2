@@ -1,0 +1,42 @@
+/var/log/acpid.log
+/var/log/auth.log
+/var/log/auth.log
+/var/log/crond.log
+/var/log/cron.log
+/var/log/daemon.log
+/var/log/debug.log
+/var/log/errors.log
+/var/log/everything.log
+/var/log/iptables.log
+/var/log/kernel.log
+/var/log/kern.log
+/var/log/lpr.log
+/var/log/mail.err
+/var/log/mail.info
+/var/log/mail.log
+/var/log/mail.warn
+/var/log/messages.log
+/var/log/news.log
+/var/log/ppp.log 
+/var/log/syslog.log
+/var/log/user.log
+/var/log/uucp.log
+/var/log/messages
+/var/log/syslog
+/var/log/error
+{
+        rotate {{ syslog_rotate_count }}
+        {{ syslog_freq }}
+        missingok
+        notifempty
+        compress
+        delaycompress
+        sharedscripts
+        postrotate
+{% if ansible_facts.distribution == 'Archlinux' %}
+                /bin/kill -HUP $(cat /run/syslog-ng.pid 2>/dev/null) 2>/dev/null || true
+{% else %}
+                invoke-rc.d syslog-ng reload > /dev/null
+{% endif %}
+        endscript
+}

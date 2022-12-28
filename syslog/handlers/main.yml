@@ -1,0 +1,6 @@
+- name: Reload syslog-ng
+  systemd:
+    name: "{{ syslog_service_name }}"
+    state: reloaded
+    enabled: true
+    masked: false

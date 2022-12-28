@@ -1,0 +1,10 @@
+syslog_role: "standalone"
+syslog_service_name: "syslog-ng"
+syslog_transport_protocol: "udp"
+syslog_port: 514
+syslog_group: "adm"
+syslog_remote_dir: "/var/log/remote"
+syslog_rotate_count: 4
+syslog_freq: "weekly"
+syslog_remote_rotate_count: 7
+syslog_remote_freq: "daily"

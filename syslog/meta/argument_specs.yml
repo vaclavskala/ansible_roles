@@ -1,0 +1,66 @@
+argument_specs:
+  main:
+    short_description: Parameters for syslog role
+    options:
+      syslog_role:
+        type: "str"
+        required: false
+        description: "If server is standalone, forwarding or loghost"
+      syslog_transport_protocol:
+        type: "str"
+        required: false
+        default: "udp"
+        choices:
+          - 'udp'
+          - 'tcp'
+        description: "Use TCP or UDP for transport"
+      syslog_interface_name:
+        type: "str"
+        required: false
+        description: "From which interface accept syslog"
+      syslog_port:
+        type: "int"
+        required: false
+        default: "514"
+        description: "Port for syslog"
+      syslog_remote_dir:
+        type: "str"
+        required: false
+        default: "/var/log/remote"
+        description: "Directory where save remote syslog"
+      syslog_forward_target:
+        type: "str"
+        required: false
+        description: "IP address of syslog loghost"
+      syslog_rotate_count:
+        type: "int"
+        required: false
+        default: "4"
+        description: "File retention for syslog logrotate"
+      syslog_freq:
+        type: "str"
+        required: false
+        default: "weekly"
+        choices:
+          - 'hourly'
+          - 'daily'
+          - 'weekly'
+          - 'monthly'
+          - 'yearly'
+        description: "Log rotation frequency"
+      syslog_remote_rotate_count:
+        type: "int"
+        required: false
+        default: "7"
+        description: "File retention for remote syslog logrotate"
+      syslog_remote_freq:
+        type: "str"
+        required: false
+        default: "weekly"
+        choices:
+          - 'hourly'
+          - 'daily'
+          - 'weekly'
+          - 'monthly'
+          - 'yearly'
+        description: "Remote log rotation frequency"

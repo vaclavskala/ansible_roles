@@ -1,0 +1,2 @@
+syslog_service_name: "syslog-ng@default"
+syslog_group: "log"

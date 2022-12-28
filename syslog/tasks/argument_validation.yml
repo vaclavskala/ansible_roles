@@ -1,0 +1,24 @@
+- name: "Check if variables for forward role are defined"
+  when: syslog_role == "forward"
+  block:
+    - name: Assert syslog_forward_target is IP address
+      assert:
+        that:
+          - syslog_forward_target is defined
+          - syslog_forward_target | ansible.netcommon.ipaddr
+
+    - name: Assert syslog port number is in range of unix ports
+      assert:
+        that:
+          - syslog_port is defined
+          - syslog_port > 0
+          - syslog_port < 65535
+
+
+- name: "Check if variables for loghost role are defined"
+  when: syslog_role == "loghost"
+  block:
+    - name: Assert syslog_interface_name is defined
+      assert:
+        that:
+          - syslog_interface_name is defined

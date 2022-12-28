@@ -1,0 +1,2 @@
+destination remote_server { network("{{ syslog_forward_target }}" transport("{{ syslog_transport_protocol }}") port({{ syslog_port }})); };
+log {source(s_src); destination(remote_server); };

@@ -1,0 +1,17 @@
+{{ syslog_remote_dir }}/*.log
+{
+        rotate {{ syslog_remote_rotate_count }}
+        {{ syslog_remote_freq }}
+        missingok
+        notifempty
+        compress
+        delaycompress
+        sharedscripts
+        postrotate
+{% if ansible_facts.distribution == 'Archlinux' %}
+                /bin/kill -HUP $(cat /run/syslog-ng.pid 2>/dev/null) 2>/dev/null || true
+{% else %}
+                invoke-rc.d syslog-ng reload > /dev/null
+{% endif %}
+        endscript
+}
