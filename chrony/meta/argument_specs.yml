@@ -1,0 +1,19 @@
+argument_specs:
+  main:
+    short_description: Parameters for chrony role
+    options:
+      chrony_pools:
+        type: "list"
+        elements: "str"
+        required: false
+        description: "List of NTP pools"
+      chrony_servers:
+        type: "list"
+        elements: "str"
+        required: false
+        description: "List of NTP servers"
+      chrony_allow:
+        type: "list"
+        elements: "str"
+        required: false
+        description: "List of IP ranges from which allow access"

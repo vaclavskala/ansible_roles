@@ -1,0 +1,14 @@
+{% for pool in chrony_pools %}
+pool {{ pool }} iburst
+{% endfor %}
+{% for server in chrony_servers %}
+server {{ server }} iburst
+{% endfor %}
+{% for ip in chrony_allow %}
+allow {{ ip }}
+{% endfor %}
+driftfile /var/lib/chrony/chrony.drift
+maxupdateskew 100.0
+dumpdir /var/lib/chrony
+logchange 0.5
+rtcsync

@@ -1,0 +1,3 @@
+chrony_pools: "pool.ntp.org"
+chrony_servers: []
+chrony_allow: []

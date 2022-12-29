@@ -1,0 +1,23 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: Install chrony
+  package:
+    name: chrony
+    state: present
+
+- name: Copy chrony config
+  template:
+    src: chrony.conf.j2
+    dest: /etc/chrony.conf
+    mode: "644"
+    owner: root
+    group: root
+  notify: Reload chrony
+
+- name: Start and enable chrony
+  systemd:
+    name: chronyd
+    state: started
+    enabled: true

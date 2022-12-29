@@ -1,0 +1,10 @@
+- name: Assert atleast one pool or server is defined
+  assert:
+    that:
+      - chrony_pools | length > 0 or chrony_servers | length > 0
+
+- name: Assert allow is IP
+  assert:
+    that:
+      - "item | ansible.utils.ipaddr"
+  loop: "{{ chrony_allow }}"
