@@ -47,3 +47,12 @@
     group: nsd
     mode: '0600'
   notify: Reload nsd
+
+- name: "Allow incoming DNS"
+  template:
+    src: "nftables.j2"
+    dest: "/etc/nftables/input/10-nsd.nft"
+    owner: root
+    group: root
+    mode: '0600'
+  notify: Restart nftables
