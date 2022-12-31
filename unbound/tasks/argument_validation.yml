@@ -1,0 +1,49 @@
+- name: Assert atleast one pool or server is defined
+  assert:
+    that:
+      - unbound_tls_cert_path is defined
+  when: unbound_forward_tls is true
+
+- name: Assert unbound_access_control is IP
+  assert:
+    that:
+      - "item | ansible.utils.ipaddr"
+  loop: "{{ unbound_access_control }}"
+
+- name: Assert unbound_ipv4_interfaces is IP
+  assert:
+    that:
+      - "item | ansible.utils.ipaddr"
+  loop: "{{ unbound_ipv4_interfaces }}"
+
+- name: Assert unbound_ipv6_interfaces is IP
+  assert:
+    that:
+      - "item | ansible.utils.ipaddr"
+  loop: "{{ unbound_ipv6_interfaces }}"
+
+- name: Assert unbound_forward_ipv4 has correct format
+  assert:
+    that:
+      - "item.split('@') | length == 2"
+      - "item.split('@')[1] is match('[0-9]{1,5} ?#.*$') or item.split('@')[1] is match('[0-9]{1,5}$')"
+  loop: "{{ unbound_forward_ipv4 }}"
+
+- name: Assert unbound_forward_ipv4 is IP
+  assert:
+    that:
+      - "item.split('@')[0] | ansible.utils.ipaddr"
+      - "item.split('@')[1] is match('[0-9]{1,5} ?#.*$') or item.split('@')[1] is match('[0-9]{1,5}$')"
+  loop: "{{ unbound_forward_ipv4 }}"
+
+- name: Assert unbound_forward_ipv6 has correct format
+  assert:
+    that:
+      - "item.split('@') | length == 2"
+  loop: "{{ unbound_forward_ipv6 }}"
+
+- name: Assert unbound_forward_ipv6 is IP
+  assert:
+    that:
+      - "item.split('@')[0] | ansible.utils.ipaddr"
+  loop: "{{ unbound_forward_ipv6 }}"

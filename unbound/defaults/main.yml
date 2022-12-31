@@ -1,0 +1,19 @@
+unbound_dnssec_enable: true
+unbound_forward_tls: false
+unbound_tls_cert_path: "/etc/ssl/certs/ca-certificates.crt"
+unbound_forward_enable: true
+unbound_access_control:
+  - "127.0.0.0/8"
+unbound_forward_ipv4:
+  - "1.0.0.1@53 #one.one.one.one"
+  - "1.1.1.1@53 #one.one.one.one"
+  - "8.8.4.4@53 #dns.google"
+  - "8.8.8.8@53 #dns.google"
+unbound_forward_ipv6:
+  - "2606:4700:4700::1111@53 #one.one.one.one"
+  - "2606:4700:4700::1001@53 #one.one.one.one"
+  - "2001:4860:4860::8888@53 #dns.google"
+  - "2001:4860:4860::8844@53 #dns.google"
+unbound_ipv4_interfaces:
+ - "127.0.0.1"
+unbound_ipv6_interfaces: []

@@ -1,0 +1,23 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: Install unbound
+  package:
+    name: unbound
+    state: present
+
+- name: Copy unbound config
+  template:
+    src: unbound.conf
+    dest: /etc/unbound/unbound.conf
+    mode: "0644"
+    owner: "root"
+    group: "root"
+  notify: Reload unbound
+
+- name: Start and enable unbound
+  systemd:
+    name: unbound
+    state: started
+    enabled: true

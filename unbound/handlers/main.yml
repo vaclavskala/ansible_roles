@@ -1,0 +1,5 @@
+- name: Reload unbound
+  systemd:
+    name: unbound
+    state: reloaded
+    enabled: true
