@@ -15,5 +15,5 @@ unbound_forward_ipv6:
   - "2001:4860:4860::8888@53 #dns.google"
   - "2001:4860:4860::8844@53 #dns.google"
 unbound_ipv4_interfaces:
- - "127.0.0.1"
+  - "127.0.0.1"
 unbound_ipv6_interfaces: []
