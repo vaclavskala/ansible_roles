@@ -1,0 +1,30 @@
+- name: Continue only on archlinux
+  assert:
+    that:
+      - "ansible_facts.distribution == 'Archlinux'"
+
+- name: When control enabled assert ip, port, pass is defined
+  assert:
+    that:
+      - "lxd_control_ip is defined"
+      - "lxd_control_port is defined"
+      - "lxd_control_pass is defined"
+  when: "lxd_control_enable is defined"
+
+- name: Assert control IP is IP address
+  assert:
+    that:
+      - "lxd_control_ip | ansible.netcommon.ipaddr"
+  when: "lxd_control_enable is defined"
+
+- name: Assert control port number is in range of unix ports
+  assert:
+    that:
+      - "lxd_control_port > 0"
+      - "lxd_control_port < 65535"
+  when: "lxd_control_enable is defined"
+
+- name: Assert bridge IP is IP address
+  assert:
+    that:
+      - "lxd_bridge_ip | ansible.netcommon.ipaddr"

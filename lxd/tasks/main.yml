@@ -1,0 +1,82 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: Install lxd
+  pacman:
+    name: lxd
+    state: present
+    extra_args: "--ask 4"
+
+- name: Allocate uid for lxd
+  ansible.builtin.blockinfile:
+    path: "/etc/subuid"
+    marker: "### {mark} LXD BLOCK"
+    create: true
+    block: |
+      root:{{ lxd_subid_start }}:{{ lxd_subid_count }}
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Allocate gid for lxd
+  ansible.builtin.blockinfile:
+    path: "/etc/subgid"
+    marker: "### {mark} LXD BLOCK"
+    create: true
+    block: |
+      root:{{ lxd_subid_start }}:{{ lxd_subid_count }}
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Allow IP forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+    state: present
+    sysctl_file: "/etc/sysctl.d/70-lxd.conf"
+
+- name: "Allow forward for lxd"
+  template:
+    src: "forward.j2"
+    dest: "/etc/nftables/forward/10-lxd.nft"
+    owner: root
+    group: root
+    mode: '0600'
+  notify: Restart nftables
+
+- name: "Allow lxd connect to host"
+  template:
+    src: "input.j2"
+    dest: "/etc/nftables/input/10-lxd.nft"
+    owner: root
+    group: root
+    mode: '0600'
+  notify: Restart nftables
+
+- name: Start lxd
+  systemd:
+    name: lxd
+    state: started
+    enabled: true
+
+- name: Check if lxd use default config
+  shell:
+    cmd: 'lxd init --dump | grep -qF "storage_pools: []"'
+  register: lxd_config_default
+  changed_when: false
+  failed_when: false
+
+- name: Copy lxd configuration
+  template:
+    src: "lxc-init.j2"
+    dest: "/var/lib/lxd/config.seed"
+    owner: root
+    group: root
+    mode: 0400
+  when: lxd_config_default.rc == 0
+
+- name: Init lxd
+  shell: 'lxd init --preseed < /var/lib/lxd/config.seed'
+  when: lxd_config_default.rc == 0

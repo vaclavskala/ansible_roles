@@ -1,0 +1,8 @@
+lxd_control_enable: false
+lxd_storage_path: 'pool1/lxd'
+lxd_storage_backend: 'zfs'
+lxd_storage_name: 'zfs'
+lxd_bridge_nat: true
+lxd_bridge_name: 'lxdbr0'
+lxd_subid_start: 1000000
+lxd_subid_count: 1000000000

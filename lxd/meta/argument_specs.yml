@@ -1,0 +1,61 @@
+argument_specs:
+  main:
+    short_description: Parameters for lxd role
+    options:
+      lxd_storage_path:
+        type: "str"
+        required: false
+        default: "pool1/lxd"
+        description: "Dataset for lxd"
+      lxd_storage_backend:
+        type: "str"
+        required: false
+        choices:
+          - zfs
+          - dir
+        default: "zfs"
+        description: "Backend for lxd"
+      lxd_storage_name:
+        type: "str"
+        required: false
+        default: "zfs"
+        description: "Name for lxd storage"
+      lxd_bridge_nat:
+        type: "bool"
+        required: false
+        default: true
+        description: "Use nat bridge"
+      lxd_bridge_name:
+        type: "str"
+        required: false
+        default: 'lxdbr0'
+        description: "Name for lxd bridge"
+      lxd_subid_start:
+        type: "int"
+        required: false
+        description: "Start of lxd reserved uid range"
+      lxd_subid_count:
+        type: "int"
+        required: false
+        description: "Size of lxd reserved uid range"
+      lxd_control_enable:
+        type: "bool"
+        required: false
+        default: false
+        description: "Allow remote control"
+      lxd_control_ip:
+        type: "str"
+        required: false
+        description: "Control IP"
+      lxd_control_port:
+        type: "int"
+        required: false
+        description: "Control port"
+      lxd_control_pass:
+        type: "str"
+        required: false
+        description: "Control IP"
+      lxd_bridge_ip:
+        type: "str"
+        required: true
+        description: "IP range for lxd bridge"

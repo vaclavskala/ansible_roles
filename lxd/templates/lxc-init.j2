@@ -1,0 +1,38 @@
+{% if lxd_control_enable == true %}
+config:
+  core.https_address: {{ lxd_control_ip }}:{{ lxd_control_port }}
+  core.trust_password: {{ lxd_control_pass }}
+{% else %}
+config: {}
+{% endif %}
+networks:
+- config:
+    ipv4.address: {{ lxd_bridge_ip }}
+    ipv4.nat: "{{ lxd_bridge_nat }}"
+    ipv4.dhcp: "true"
+    ipv6.address: auto
+  description: ""
+  name: {{ lxd_bridge_name }}
+  type: ""
+  project: default
+storage_pools:
+- config:
+    source: {{ lxd_storage_path }}
+  description: ""
+  name: {{ lxd_storage_name }}
+  driver: {{ lxd_storage_backend }}
+profiles:
+- config: {}
+  description: ""
+  devices:
+    eth0:
+      name: eth0
+      network: {{ lxd_bridge_name }}
+      type: nic
+    root:
+      path: /
+      pool: {{ lxd_storage_name }}
+      type: disk
+  name: default
+projects: []
+cluster: null
