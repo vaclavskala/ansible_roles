@@ -59,3 +59,8 @@ argument_specs:
         type: "str"
         required: true
         description: "IP range for lxd bridge"
+      lxd_traffic_accounting:
+        type: "bool"
+        required: false
+        default: true
+        description: "If count traffic on lxd bridge"

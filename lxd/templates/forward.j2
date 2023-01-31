@@ -1,2 +1,2 @@
-iifname "{{ lxd_bridge_name }}" counter accept
-oifname "{{ lxd_bridge_name }}" counter accept
+iifname "{{ lxd_bridge_name }}" {%- if lxd_traffic_accounting is true %} counter {%- endif %} accept
+oifname "{{ lxd_bridge_name }}" {%- if lxd_traffic_accounting is true %} counter {%- endif %} accept
