@@ -2,24 +2,24 @@ argument_specs:
   main:
     short_description: Parameters for lxd role
     options:
-      lxd_storage_path:
+      lxd_storage_default_path:
         type: "str"
         required: false
         default: "pool1/lxd"
-        description: "Dataset for lxd"
-      lxd_storage_backend:
+        description: "Default dataset for lxd"
+      lxd_storage_default_backend:
         type: "str"
         required: false
         choices:
           - zfs
           - dir
         default: "zfs"
-        description: "Backend for lxd"
-      lxd_storage_name:
+        description: "Default backend for lxd"
+      lxd_storage_default_name:
         type: "str"
         required: false
         default: "zfs"
-        description: "Name for lxd storage"
+        description: "Name for lxd default storage"
       lxd_bridge_nat:
         type: "bool"
         required: false
@@ -64,3 +64,49 @@ argument_specs:
         required: false
         default: true
         description: "If count traffic on lxd bridge"
+      lxd_storage_backup_enable:
+        type: "bool"
+        required: false
+        default: false
+        description: "If create specific storage to backup"
+      lxd_storage_backup_path:
+        type: "str"
+        required: false
+        default: "pool1/system/lxd"
+        description: "Name of dataset for backup storage pool"
+      lxd_storage_backup_backend:
+        type: "str"
+        required: false
+        choices:
+          - zfs
+          - dir
+        default: "zfs"
+        description: "Backend for backup lxd storage"
+      lxd_storage_backup_name:
+        type: "str"
+        required: false
+        default: "zfs"
+        description: "Name for lxd backup storage"
+      lxd_storage_nobackup_enable:
+        type: "bool"
+        required: false
+        default: false
+        description: "If create specific storage to not backup"
+      lxd_storage_nobackup_path:
+        type: "str"
+        required: false
+        default: "pool1/system/lxd"
+        description: "Name of dataset for nobackup storage pool"
+      lxd_storage_nobackup_backend:
+        type: "str"
+        required: false
+        choices:
+          - zfs
+          - dir
+        default: "zfs"
+        description: "Backend for nobackup lxd storage"
+      lxd_storage_nobackup_name:
+        type: "str"
+        required: false
+        default: "zfs"
+        description: "Name for lxd nobackup storage"

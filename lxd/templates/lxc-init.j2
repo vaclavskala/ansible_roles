@@ -17,10 +17,24 @@ networks:
   project: default
 storage_pools:
 - config:
-    source: {{ lxd_storage_path }}
-  description: ""
-  name: {{ lxd_storage_name }}
-  driver: {{ lxd_storage_backend }}
+    source: {{ lxd_storage_default_path }}
+  description: "{{ lxd_storage_default_comment }}"
+  name: {{ lxd_storage_default_name }}
+  driver: {{ lxd_storage_default_backend }}
+{% if lxd_storage_backup_enable == true %}
+- config:
+    source: {{ lxd_storage_backup_path }}
+  description: "{{ lxd_storage_backup_comment }}"
+  name: {{ lxd_storage_backup_name }}
+  driver: {{ lxd_storage_backup_backend }}
+{% endif %}
+{% if lxd_storage_nobackup_enable == true %}
+- config:
+    source: {{ lxd_storage_nobackup_path }}
+  description: "{{ lxd_storage_nobackup_comment }}"
+  name: {{ lxd_storage_nobackup_name }}
+  driver: {{ lxd_storage_nobackup_backend }}
+{% endif %}
 profiles:
 - config: {}
   description: ""
@@ -31,8 +45,36 @@ profiles:
       type: nic
     root:
       path: /
-      pool: {{ lxd_storage_name }}
+      pool: {{ lxd_storage_default_name }}
       type: disk
   name: default
+{% if lxd_storage_backup_enable == true %}
+- config: {}
+  description: ""
+  devices:
+    eth0:
+      name: eth0
+      network: {{ lxd_bridge_name }}
+      type: nic
+    root:
+      path: /
+      pool: {{ lxd_storage_backup_name }}
+      type: disk
+  name: {{ lxd_storage_backup_name }}
+{% endif %}
+{% if lxd_storage_nobackup_enable == true %}
+- config: {}
+  description: ""
+  devices:
+    eth0:
+      name: eth0
+      network: {{ lxd_bridge_name }}
+      type: nic  
+    root:
+      path: /
+      pool: {{ lxd_storage_nobackup_name }}
+      type: disk
+  name: {{ lxd_storage_nobackup_name }}
+{% endif %}
 projects: []
 cluster: null
