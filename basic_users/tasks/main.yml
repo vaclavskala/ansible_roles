@@ -11,8 +11,10 @@
 - name: "Create user {{ default_user }}"
   user:
     name: "{{ default_user }}"
+    group: "{{ default_user }}"
     groups: "sudo, {{ default_user }}"
     shell: "{{ default_shell }}"
+    home: "/home/{{ default_user }}"
 
 - name: Allow sudo group to have passwordless sudo
   lineinfile:
