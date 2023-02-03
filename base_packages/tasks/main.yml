@@ -1,10 +1,10 @@
 - name: Install base packages for Archlinux
   include_tasks: install_packages_arch.yml
-  when: ansible_facts.distribution == 'Archlinux'
+  when: ansible_facts.os_family == 'Archlinux'
 
-- name: Install base packages Ubuntu
+- name: "Install base packages {{ ansible_facts.distribution }}"
   include_tasks: install_packages_ubuntu.yml
-  when: ansible_facts.distribution == 'Ubuntu'
+  when: ansible_facts.os_family == 'Debian'
 
 - name: Install base packages RedHat
   include_tasks: install_packages_rhel.yml

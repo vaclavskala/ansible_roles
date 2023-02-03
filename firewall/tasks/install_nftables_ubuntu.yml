@@ -1,4 +1,4 @@
-- name: Install nftables Ubuntu
+- name: "Install nftables {{ ansible_facts.distribution }}"
   apt:
     pkg:
       - nftables

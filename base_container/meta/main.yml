@@ -3,6 +3,6 @@ dependencies:
   - role: ssh
   - role: basic_users
   - role: unattended_upgrade
-    when: ansible_facts.distribution == 'Ubuntu'
+    when: ansible_facts.os_family == 'Debian'
   - role: pacman
-    when: ansible_facts.distribution == 'Archlinux'
+    when: ansible_facts.os_family == 'Archlinux'
