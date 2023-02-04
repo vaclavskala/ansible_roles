@@ -22,4 +22,5 @@
       - zstd
       - grc
       - pacman-contrib
+      - inetutils
     state: present
