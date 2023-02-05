@@ -6,7 +6,7 @@
 - name: Install if qemu_guest_socket exist
   when: qemu_guest_socket.stat.exists
   block:
-    - name: Instal qemu guest agent
+    - name: Install qemu guest agent
       package:
         name:
           - qemu-guest-agent

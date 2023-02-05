@@ -1,4 +1,4 @@
-- name: Instal packages
+- name: Install packages
   package:
     name:
       - zsh
