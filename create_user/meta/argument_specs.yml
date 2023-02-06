@@ -1,0 +1,28 @@
+argument_specs:
+  main:
+    short_description: Parameters for create_user role
+    options:
+      create_user_username:
+        type: "str"
+        required: true
+        description: "Name of new user"
+      create_user_shell:
+        type: "str"
+        required: false
+        default: "/bin/bash"
+        description: "Default shell for user"
+      create_user_home:
+        type: "str"
+        required: false
+        default: "/home/<create_user_username>/"
+        description: "Home directory for user"
+      create_user_groups:
+        type: "str"
+        required: false
+        default: '<create_user_username>'
+        description: "Groups in which user belongs"
+      create_user_ssh_key:
+        type: "str"
+        required: false
+        default: 'Not defined'
+        description: "SSH key for new user"

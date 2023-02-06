@@ -1,0 +1,3 @@
+dependencies:
+  - role: zsh
+    when: create_user_shell == '/bin/zsh'

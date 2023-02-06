@@ -1,0 +1,44 @@
+- name: Create group "{{ create_user_username }}"
+  group:
+    name: "{{ create_user_username }}"
+    state: present
+
+- name: Create user "{{ create_user_username }}"
+  user:
+    name: "{{ create_user_username }}"
+    group: "{{ create_user_username }}"
+    groups: "{{ create_user_groups | default(create_user_username) }}"
+    shell: "{{ create_user_shell }}"
+    home: "{{ create_user_home }}"
+
+- name: Create .ssh directory
+  file:
+    dest: "{{ create_user_home + '/.ssh' }}"
+    owner: "{{ create_user_username }}"
+    group: "{{ create_user_username }}"
+    mode: '700'
+    state: directory
+
+- name: Create .ssh/authorized_keys file
+  file:
+    dest: "{{ create_user_home + '/.ssh/authorized_keys' }}"
+    owner: "{{ create_user_username }}"
+    group: "{{ create_user_username }}"
+    mode: '600'
+    state: touch
+  changed_when: false
+
+- name: Set ssh key
+  lineinfile:
+    path: "{{ create_user_home + '/.ssh/authorized_keys' }}"
+    regexp: "{{ create_user_ssh_key }}"
+    line: "{{ create_user_ssh_key }}"
+  when: create_user_ssh_key is defined
+
+- name: Set zsh config for "{{ create_user_username }}"
+  import_role:
+    name: zsh_user
+  vars:
+    zsh_user: "{{ create_user_username }}"
+    zsh_home: "{{ create_user_home }}"
+  when: create_user_shell == '/bin/zsh'

@@ -1,0 +1,2 @@
+create_user_home: "{{ '/home/' + create_user_username }}"
+create_user_shell: '/bin/bash'
