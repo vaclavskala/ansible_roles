@@ -1,0 +1,35 @@
+- name: Assemble devices dictionary
+  set_fact:
+    lxd_container_devices: "{%- if lxd_container_ipv4 is defined %} { 'eth0': { 'ipv4.address': '{{ lxd_container_ipv4 }}', 'name': 'eth0', 'network': '{{ lxd_container_bridge_name }}', 'type': 'nic' } } {% endif %}"
+
+- name: Create a started container
+  lxd_container:
+    name: "{{ lxd_container_name }}"
+    ignore_volatile_options: true
+    state: started
+    source:
+      type: image
+      mode: pull
+      server: "{{ lxd_container_source }}"
+      protocol: simplestreams
+      alias: "{{ lxd_container_distribution }}"
+    devices: "{{ lxd_container_devices | from_yaml }}"
+    config: "{{ lxd_container_limits }}"
+    profiles: ["default"]
+    wait_for_ipv4_addresses: "{{ lxd_container_wait_dhcp }}"
+    timeout: "{{ lxd_container_wait_timeout }}"
+
+- name: Check and install python in container
+  when: '"ubuntu" in lxd_container_distribution or "debian" in lxd_container_distribution'
+  block:
+    - name: Check python is installed in container
+      delegate_to: "{{ lxd_container_inventory_hostname | default(lxd_container_name) }}"
+      ansible.builtin.raw: dpkg -s python3
+      register: python_install_check
+      failed_when: python_install_check.rc not in [0, 1]
+      changed_when: false
+
+    - name: Install python in container
+      delegate_to: "{{ lxd_container_inventory_hostname | default(lxd_container_name) }}"
+      ansible.builtin.raw: apt-get install -y python3
+      when: python_install_check.rc == 1

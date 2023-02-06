@@ -1,0 +1,46 @@
+argument_specs:
+  main:
+    short_description: Parameters for lxd_create_container role
+    options:
+      lxd_container_distribution:
+        type: "str"
+        required: false
+        default: "ubuntu/22.04"
+        description: "Linux distribution for container"
+      lxd_container_source:
+        type: "str"
+        required: false
+        default: "https://images.linuxcontainers.org"
+        description: "LXD images repo"
+      lxd_container_wait_dhcp:
+        type: "bool"
+        required: false
+        default: true
+        description: "If wait until container gets IP from DHCP"
+      lxd_container_wait_timeout:
+        type: "int"
+        required: false
+        default: 60
+        description: "How long wait for DHCP"
+      lxd_container_ipv4:
+        type: "str"
+        required: true
+        description: "IPv4 for container"
+      lxd_container_name:
+        type: "str"
+        required: true
+        description: "Name of container"
+      lxd_container_limits:
+        type: "dict"
+        required: false
+        default: '{}'
+        description: "Limits for container"
+      lxd_container_inventory_hostname:
+        type: "str"
+        required: false
+        default: '<lxd_container_name>'
+        description: "If inventory name differs from lxd_container_name"
+      lxd_container_bridge_name:
+        type: "str"
+        required: true
+        description: "Name of lxd bridge to which attach container"
