@@ -1,4 +1,4 @@
-- name: Install base packages for ubuntu
+- name: "Install base packages for {{ ansible_facts.distribution }}"
   apt:
     pkg:
       - nano
