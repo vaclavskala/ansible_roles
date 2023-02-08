@@ -20,4 +20,5 @@
       - curl
       - zstd
       - telnet
+      - mtr
     state: present
