@@ -1,0 +1,11 @@
+- name: Install cron package for arch
+  pacman:
+    name:
+      - cronie
+    state: present
+
+- name: Start cron
+  systemd:
+    name: cronie
+    state: started
+    enabled: true

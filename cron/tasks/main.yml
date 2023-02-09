@@ -1,0 +1,7 @@
+- name: Install base packages for Archlinux
+  include_tasks: install_cron_arch.yml
+  when: ansible_facts.os_family == 'Archlinux'
+
+- name: "Install base packages {{ ansible_facts.distribution }}"
+  include_tasks: install_cron_ubuntu.yml
+  when: ansible_facts.os_family == 'Debian'

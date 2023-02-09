@@ -1,0 +1,11 @@
+- name: "Install cron package for {{ ansible_facts.distribution }}"
+  apt:
+    pkg:
+      - cron
+    state: present
+
+- name: Start cron
+  systemd:
+    name: cron
+    state: started
+    enabled: true
