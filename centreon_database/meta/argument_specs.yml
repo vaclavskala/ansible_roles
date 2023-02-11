@@ -1,0 +1,26 @@
+argument_specs:
+  main:
+    short_description: Parameters for centreon_database role
+    options:
+      centreon_database_install_user:
+        type: "str"
+        required: false
+        default: "centreon_install_user"
+        description: "Name of centreon install user"
+      centreon_database_user_state:
+        type: "str"
+        required: false
+        default: 'absent'
+        choices:
+          - 'present'
+          - 'absent'
+        description: "If create or delete install user"
+      centreon_database_centreon_ip:
+        type: "str"
+        required: false
+        default: "127.0.0.1"
+        description: "Centreon central IP"
+      centreon_database_user_pass:
+        type: "str"
+        required: true
+        description: "Password for install user"

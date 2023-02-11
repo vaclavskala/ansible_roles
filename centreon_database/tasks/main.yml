@@ -1,0 +1,12 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: Create centreon install user
+  community.mysql.mysql_user:
+    state: "{{ centreon_database_user_state }}"
+    name: "{{ centreon_database_install_user }}"
+    password: "{{ centreon_database_user_pass }}"
+    host: "{{ centreon_database_centreon_ip }}"
+    priv:
+      '*.*': 'ALL,GRANT'

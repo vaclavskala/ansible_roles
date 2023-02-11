@@ -1,0 +1,10 @@
+- name: User is present, password is mandatory
+  assert:
+    that:
+      - "centreon_database_user_pass is defined"
+  when: "centreon_database_user_state == 'present'"
+
+- name: Assert centreon_ip is IP address
+  assert:
+    that:
+      - "centreon_database_centreon_ip | ansible.netcommon.ipaddr"

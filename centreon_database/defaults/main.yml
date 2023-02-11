@@ -1,0 +1,3 @@
+centreon_database_install_user: 'centreon_install_user'
+centreon_database_user_state: 'absent'
+centreon_database_centreon_ip: '127.0.0.1'
