@@ -1,0 +1,62 @@
+argument_specs:
+  main:
+    short_description: Parameters for mariadb role
+    options:
+      mariadb_version:
+        type: "str"
+        required: false
+        default: "10.6"
+        choices:
+          - '10.5'
+          - '10.6'
+        description: "Version of mariadb server"
+      mariadb_key_url:
+        type: "str"
+        required: false
+        default: 'https://mariadb.org/mariadb_release_signing_key.asc'
+        description: "URL of mariadb gpg repo key"
+      mariadb_repo:
+        type: "str"
+        required: false
+        default: 'https://mirror.vpsfree.cz/mariadb/repo'
+        description: "Mariadb url repo"
+      mariadb_cron:
+        type: "bool"
+        required: false
+        default: true
+        description: "If run maintenance cron"
+      mariadb_bind_address:
+        type: "str"
+        required: false
+        default: '127.0.0.1'
+        description: "Bind IP address"
+      mariadb_buffer_pool_size:
+        type: "str"
+        required: false
+        default: '1G'
+        description: "innodb_buffer_pool_size parameter"
+      mariadb_tmp_table_size:
+        type: "str"
+        required: false
+        default: '128M'
+        description: "tmp_table_size parameter"
+      mariadb_enable_query_cache:
+        type: "bool"
+        required: false
+        default: true
+        description: "query_cache_type parameter"
+      mariadb_query_cache_size:
+        type: "str"
+        required: false
+        default: '256M'
+        description: "query_cache_size parameter"
+      mariadb_table_open_cache:
+        type: "int"
+        required: false
+        default: '1024'
+        description: "table_open_cache parameter"
+      mariadb_enable_doublewrite:
+        type: "bool"
+        required: false
+        default: true
+        description: "innodb_doublewrite parameter"

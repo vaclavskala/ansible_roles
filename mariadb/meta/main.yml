@@ -1,0 +1,3 @@
+dependencies:
+  - role: cron
+    when: mariadb_cron

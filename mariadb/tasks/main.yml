@@ -1,0 +1,55 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: Get mariadb repo key
+  ansible.builtin.get_url:
+    url: "{{ mariadb_key_url }}"
+    dest: /etc/apt/keyrings/mariadb.asc
+    mode: '0644'
+
+- name: Create mariadb repo file
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/mariadb.asc] {{ mariadb_repo }}/{{ mariadb_version }}/{{ ansible_facts.distribution | lower }} {{ ansible_distribution_release }} main"
+    state: present
+
+- name: "Install mariadb-{{ mariadb_version }} server"
+  apt:
+    pkg:
+      - mariadb-server
+    state: present
+
+- name: Copy mariadb tunning rules
+  template:
+    src: '90-tunning.cnf.j2'
+    dest: '/etc/mysql/mariadb.conf.d/90-tunning.cnf'
+    owner: root
+    group: root
+    mode: 0644
+  notify: Restart mariadb
+
+- name: Increase open files
+  template:
+    src: 'override.conf.j2'
+    dest: '/etc/systemd/system/mariadb.service.d/override.conf'
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Systemd daemon-reload
+    - Restart mariadb
+
+- name: Install python-mysql package
+  apt:
+    pkg:
+      - python3-mysqldb
+    state: present
+
+- name: Copy mysql maintenance cron
+  copy:
+    src: cron
+    dest: "/etc/cron.d/mariadb"
+    owner: root
+    group: root
+    mode: 0644
+  when: mariadb_cron

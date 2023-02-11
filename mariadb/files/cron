@@ -1,0 +1,2 @@
+# m h   dom mon dow   user    command
+  0 4   *   *   *     root    mysqlcheck --auto-repair --optimize --all-databases --extended --silent

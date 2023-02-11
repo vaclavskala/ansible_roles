@@ -1,0 +1,35 @@
+# Custom tunning
+
+[mysqld]
+bind-address              = {{ mariadb_bind_address }}
+
+max_allowed_packet        = 1G
+thread_cache_size         = {{ ansible_facts.processor_vcpus }}
+read_buffer_size          = 512K
+read_rnd_buffer_size      = 512K
+sort_buffer_size          = 32M
+join_buffer_size          = 4M
+open_files_limit          = 65536
+tmp_table_size            = {{ mariadb_tmp_table_size }}
+max_heap_table_size       = {{ mariadb_tmp_table_size }}
+{% if mariadb_enable_query_cache %}
+query_cache_type          = 1
+query_cache_limit         = 1M
+query_cache_size          = {{ mariadb_query_cache_size }}
+{% else %}
+query_cache_type          = 0
+query_cache_limit         = 1M
+query_cache_size          = 0M
+{% endif %}
+
+table_open_cache          = {{ mariadb_table_open_cache }}
+table_definition_cache    = {{ mariadb_table_open_cache }}
+
+innodb_buffer_pool_size   = {{ mariadb_buffer_pool_size }}
+innodb_thread_concurrency = {{ ansible_facts.processor_vcpus * 2 }}
+innodb_open_files         = 32768
+{% if mariadb_enable_doublewrite %}
+innodb_doublewrite        = 1
+{% else %}
+innodb_doublewrite        = 0
+{% endif %}
