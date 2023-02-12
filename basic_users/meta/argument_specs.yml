@@ -4,8 +4,7 @@ argument_specs:
     options:
       default_user:
         type: "str"
-        required: false
-        default: "skala"
+        required: true
         description: "Default admin user"
       default_shell:
         type: "str"
