@@ -1,0 +1,37 @@
+- name: Install postfix
+  package:
+    name:
+      - postfix
+    state: present
+
+- name: Create conf.d directory
+  ansible.builtin.file:
+    path: "/etc/postfix/conf.d"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy common postfix configuration
+  template:
+    src: common.cf.j2
+    dest: /etc/postfix/conf.d/common.cf
+    mode: 0644
+    owner: root
+    group: root
+  notify: Reload postfix
+
+- name: Assemble main.cf from fragments
+  ansible.builtin.assemble:
+    src: /etc/postfix/conf.d
+    dest: /etc/postfix/main.cf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Start and enable postfix
+  systemd:
+    name: postfix
+    state: started
+    enabled: true
+    masked: false

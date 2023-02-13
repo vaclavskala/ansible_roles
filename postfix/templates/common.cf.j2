@@ -1,0 +1,25 @@
+myhostname = {{ postfix_hostname }}
+
+# used in SMTP greeting
+smtpd_banner = $myhostname ESMTP
+
+# used for local delivery
+biff = no
+
+# append .myhostname to local mail
+append_dot_mydomain = no
+
+# source of local mails
+myorigin = $myhostname
+
+# what domains deliver localy
+mydestination = $myhostname, localhost
+
+# list of trusted networks
+mynetworks = {{ postfix_mynetworks | join(' ') }} {{ postfix_additional_mynetworks | join(' ') }}
+smtpd_relay_restrictions = permit_mynetworks defer_unauth_destination
+
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = {{ postfix_inet_interfaces }}
+inet_protocols = all
