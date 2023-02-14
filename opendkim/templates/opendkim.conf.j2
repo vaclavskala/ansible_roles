@@ -1,0 +1,8 @@
+BaseDirectory           /run/opendkim
+Domain                  *
+KeyFile                 {{ opendkim_keys_path }}/{{ opendkim_selector }}.private
+Selector                {{ opendkim_selector }}
+Socket                  local:/run/opendkim/opendkim.sock
+Syslog                  Yes
+TemporaryDirectory      /run/opendkim
+UMask                   002

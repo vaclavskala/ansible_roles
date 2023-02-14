@@ -1,0 +1,68 @@
+- name: Install opendkim
+  package:
+    name:
+      - opendkim
+    state: present
+
+- name: Copy opendkim config
+  template:
+    src: "opendkim.conf.j2"
+    dest: "/etc/opendkim/opendkim.conf"
+    owner: opendkim
+    group: opendkim
+    mode: '0644'
+  notify: Reload opendkim
+
+- name: Creates directory for keys
+  file:
+    path: "{{ opendkim_keys_path }}"
+    owner: opendkim
+    group: opendkim
+    mode: '0755'
+    state: directory
+
+- name: Copy opendkim.service config
+  template:
+    src: "opendkim.service"
+    dest: "/etc/systemd/system/opendkim.service"
+    owner: root
+    group: root
+    mode: 0644
+  notify: Systemd daemon-reload
+
+- name: Check if opendkim key exist
+  stat:
+    path: "{{ opendkim_keys_path }}/{{ opendkim_selector }}.private"
+  register: opendkim_key
+
+- name: Generate opendkim key
+  when: not opendkim_key.stat.exists
+  block:
+    - name: Generate opendkim private key for selector "{{ opendkim_selector }}"
+      command: "opendkim-genkey -r -s {{ opendkim_selector }} -D {{ opendkim_keys_path }}{%- if opendkim_algorithm == 'ED25519' %} --ed25519 {% endif %}"
+      notify: Reload opendkim
+      # ansible-lint fix
+      changed_when: true
+
+    - name: Fix key permissions
+      ansible.builtin.file:
+        path: "{{ opendkim_keys_path }}"
+        owner: opendkim
+        group: opendkim
+        recurse: true
+
+    - name: Slurp key file
+      slurp:
+        src: "{{ opendkim_keys_path }}/{{ opendkim_selector }}.txt"
+      register: opendkim_slurpfile
+
+    - name: Print public key
+      debug:
+        msg: "{{ opendkim_slurpfile['content'] | b64decode | striptags }}"
+
+- name: Start opendkim
+  systemd:
+    name: opendkim
+    state: started
+    enabled: true
+    masked: false

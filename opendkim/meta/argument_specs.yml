@@ -1,0 +1,22 @@
+argument_specs:
+  main:
+    short_description: Parameters for opendkim role
+    options:
+      opendkim_keys_path:
+        type: "str"
+        required: false
+        default: "/etc/opendkim/keys"
+        description: "Path to dkim keys"
+      opendkim_selector:
+        type: "str"
+        required: false
+        default: "default"
+        description: "Opendkim selector"
+      opendkim_algorithm:
+        type: "str"
+        required: false
+        default: "RSA"
+        choices:
+          - 'RSA'
+          - 'ED25519'
+        description: "Algorithm to use to generate key"
