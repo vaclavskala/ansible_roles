@@ -15,7 +15,7 @@
 - name: Copy common postfix configuration
   template:
     src: common.cf.j2
-    dest: /etc/postfix/conf.d/common.cf
+    dest: /etc/postfix/conf.d/01-common.cf
     mode: 0644
     owner: root
     group: root
