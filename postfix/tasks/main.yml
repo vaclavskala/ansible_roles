@@ -19,15 +19,10 @@
     mode: 0644
     owner: root
     group: root
-  notify: Reload postfix
 
-- name: Assemble main.cf from fragments
-  ansible.builtin.assemble:
-    src: /etc/postfix/conf.d
-    dest: /etc/postfix/main.cf
-    owner: root
-    group: root
-    mode: 0644
+- name: Assemble from fragments
+  import_tasks:
+    file: assemble.yml
 
 - name: Start and enable postfix
   systemd:

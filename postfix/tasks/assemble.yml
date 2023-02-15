@@ -1,0 +1,8 @@
+- name: Assemble main.cf from fragments
+  ansible.builtin.assemble:
+    src: /etc/postfix/conf.d
+    dest: /etc/postfix/main.cf
+    owner: root
+    group: root
+    mode: 0644
+  notify: Reload postfix
