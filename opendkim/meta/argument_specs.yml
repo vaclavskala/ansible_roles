@@ -20,3 +20,8 @@ argument_specs:
           - 'RSA'
           - 'ED25519'
         description: "Algorithm to use to generate key"
+      opendkim_postfix_integration:
+        type: "bool"
+        required: false
+        default: true
+        description: "If add config to postfix configuration"

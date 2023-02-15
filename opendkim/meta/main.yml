@@ -1,0 +1,3 @@
+dependencies:
+  - role: postfix
+    when: opendkim_postfix_integration

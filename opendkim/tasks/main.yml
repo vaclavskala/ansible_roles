@@ -60,6 +60,23 @@
       debug:
         msg: "{{ opendkim_slurpfile['content'] | b64decode | striptags }}"
 
+
+- name: Integrate opendkim to postfix
+  when: opendkim_postfix_integration
+  block:
+    - name: Copy opendkim postfix configuration
+      template:
+        src: postfix_opendkim.cf.j2
+        dest: /etc/postfix/conf.d/50-opendkim.cf
+        mode: 0644
+        owner: root
+        group: root
+
+    - name: Assemble config from fragments
+      include_role:
+        name: postfix
+        tasks_from: assemble
+
 - name: Start opendkim
   systemd:
     name: opendkim
