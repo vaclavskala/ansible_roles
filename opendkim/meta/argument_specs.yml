@@ -25,3 +25,8 @@ argument_specs:
         required: false
         default: true
         description: "If add config to postfix configuration"
+      opendkim_additional_trustedhosts:
+        type: "str"
+        required: false
+        default: '[]'
+        description: "Additional trusted hosts for opendkim"

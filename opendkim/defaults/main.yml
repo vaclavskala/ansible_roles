@@ -2,3 +2,4 @@ opendkim_keys_path: "/etc/opendkim/keys"
 opendkim_algorithm: 'RSA'
 opendkim_selector: 'default'
 opendkim_postfix_integration: true
+opendkim_additional_trustedhosts: []
