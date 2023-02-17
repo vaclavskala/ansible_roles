@@ -1,0 +1,40 @@
+argument_specs:
+  main:
+    short_description: Parameters for postfix role
+    options:
+      postfix_hostname:
+        type: "str"
+        required: true
+        description: "Hostname for server"
+      postfix_mynetworks:
+        type: "list"
+        required: false
+        elements: "str"
+        default: "127.0.0.0/8, [::ffff:127.0.0.0]/104, [::1]/128"
+        description: "Localhost mynetworks"
+      postfix_additional_mynetworks:
+        type: "list"
+        required: false
+        elements: "str"
+        default: "[]"
+        description: "Additional IPs to mynetworks"
+      postfix_inet_interfaces:
+        type: "str"
+        required: false
+        default: "all"
+        description: "Inet interfaces"
+      postfix_enable_tls:
+        type: "bool"
+        required: false
+        default: true
+        description: "If send mails using TLS"
+      postfix_enforce_tls:
+        type: "bool"
+        required: false
+        default: false
+        description: "Enforce sending mails using TLS"
+      postfix_remove_headers:
+        type: "bool"
+        required: false
+        default: true
+        description: "Remove headers to hide internal network topology"

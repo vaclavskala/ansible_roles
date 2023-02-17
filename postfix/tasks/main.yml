@@ -20,6 +20,43 @@
     owner: root
     group: root
 
+- name: Copy relayhost configuration
+  template:
+    src: relayhost.cf.j2
+    dest: /etc/postfix/conf.d/60-relayhost.cf
+    mode: 0644
+    owner: root
+    group: root
+  when: postfix_relayhost is defined
+
+- name: Copy TLS configuration
+  template:
+    src: tls.cf.j2
+    dest: /etc/postfix/conf.d/20-tls.cf
+    mode: 0644
+    owner: root
+    group: root
+  when: postfix_enable_tls
+
+- name: Remove unneeded headers
+  when: postfix_remove_headers
+  block:
+    - name: Copy postfix headers configuration
+      template:
+        src: remove_headers.cf.j2
+        dest: /etc/postfix/conf.d/30-remove_headers.cf
+        mode: 0644
+        owner: root
+        group: root
+
+    - name: Copy headers list
+      template:
+        src: smtp_header_checks.j2
+        dest: /etc/postfix/smtp_header_checks
+        mode: 0644
+        owner: root
+        group: root
+
 - name: Assemble from fragments
   import_tasks:
     file: assemble.yml

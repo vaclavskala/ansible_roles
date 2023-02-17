@@ -4,3 +4,6 @@ postfix_mynetworks:
   - '[::1]/128'
 postfix_additional_mynetworks: []
 postfix_inet_interfaces: 'all'
+postfix_enable_tls: true
+postfix_enforce_tls: false
+postfix_remove_headers: true
