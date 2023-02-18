@@ -5,6 +5,10 @@ argument_specs:
       syslog_role:
         type: "str"
         required: false
+        choices:
+          - 'standalone'
+          - 'forward'
+          - 'loghost'
         description: "If server is standalone, forwarding or loghost"
       syslog_transport_protocol:
         type: "str"
@@ -15,7 +19,8 @@ argument_specs:
           - 'tcp'
         description: "Use TCP or UDP for transport"
       syslog_interface_name:
-        type: "str"
+        type: "list"
+        elements: 'str'
         required: false
         description: "From which interface accept syslog"
       syslog_port:

@@ -6,6 +6,12 @@
   include_vars: archlinux.yml
   when: ansible_facts.distribution == 'Archlinux'
 
+- name: Install syslog-ng
+  package:
+    name:
+      - syslog-ng
+    state: present
+
 - name: Copy syslog-ng.conf
   template:
     src: "syslog-ng.conf.j2"
@@ -30,7 +36,9 @@
     owner: root
     group: root
     mode: '0644'
-  when: syslog_role == "forward"
+  when:
+    - syslog_role == "forward"
+    - global_disable_firewall is not defined
   notify: Reload syslog-ng
 
 - name: Loghost tasks
@@ -56,7 +64,7 @@
     - name: "Open {{ syslog_transport_protocol }} port {{ syslog_port }}"
       template:
         src: "nftables.j2"
-        dest: "/etc/nftables/input/10-syslog-{{ syslog_interface_name }}.nft"
+        dest: "/etc/nftables/input/10-syslog.nft"
         owner: root
         group: root
         mode: '0600'

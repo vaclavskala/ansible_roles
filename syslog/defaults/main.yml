@@ -1,6 +1,6 @@
 syslog_role: "standalone"
 syslog_service_name: "syslog-ng"
-syslog_transport_protocol: "udp"
+syslog_transport_protocol: "tcp"
 syslog_port: 514
 syslog_group: "adm"
 syslog_remote_dir: "/var/log/remote"
