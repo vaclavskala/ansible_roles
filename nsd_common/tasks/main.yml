@@ -55,4 +55,5 @@
     owner: root
     group: root
     mode: '0600'
+  when: global_disable_firewall is not defined
   notify: Restart nftables

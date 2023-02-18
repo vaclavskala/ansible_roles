@@ -2,6 +2,7 @@ dependencies:
   - role: base_container
   - role: sysctl
   - role: firewall
+    when: global_disable_firewall is not defined
   - role: vm_setup
     when:
       - ansible_virtualization_type == 'kvm'

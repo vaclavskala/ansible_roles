@@ -45,6 +45,7 @@
     group: root
     mode: '0600'
   notify: Restart nftables
+  when: global_disable_firewall is not defined
 
 - name: "Allow lxd connect to host"
   template:
@@ -54,6 +55,7 @@
     group: root
     mode: '0600'
   notify: Restart nftables
+  when: global_disable_firewall is not defined
 
 - name: Start lxd
   systemd:

@@ -28,7 +28,9 @@
     owner: root
     group: root
     mode: 0400
-  when: wireguard_firewall_forward is true
+  when:
+    - wireguard_firewall_forward is true
+    - global_disable_firewall is not defined
   notify: Restart nftables
 
 - name: Include post configure tasks
