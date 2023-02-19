@@ -1,0 +1,17 @@
+- name: Assert postfix_mynetworks are IPs
+  assert:
+    that:
+      - "item | replace('[','') | replace(']','') | ansible.utils.ipaddr"
+  loop: "{{ postfix_mynetworks }}"
+
+- name: Assert postfix_additional_mynetworks are IPs
+  assert:
+    that:
+      - "item | ansible.utils.ipaddr"
+  loop: "{{ postfix_additional_mynetworks }}"
+
+- name: Assert TLS is enabled when TLS is enforced
+  assert:
+    that:
+      - "postfix_enable_tls"
+  when: "postfix_enforce_tls"
