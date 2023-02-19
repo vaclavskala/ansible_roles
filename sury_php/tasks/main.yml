@@ -1,0 +1,30 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: Install sury repo Ubuntu
+  when: ansible_facts.distribution == 'Ubuntu'
+  block:
+    - name: Get repo key
+      ansible.builtin.apt_key:
+        keyserver: "{{ sury_repo_keyserver }}"
+        id: "{{ sury_repo_key }}"
+
+    - name: Create sury repo file
+      ansible.builtin.apt_repository:
+        repo: "deb https://ppa.launchpadcontent.net/ondrej/php/ubuntu/ {{ ansible_distribution_release }} main"
+        state: present
+
+- name: Install sury repo Debian
+  when: ansible_facts.distribution == 'Debian'
+  block:
+    - name: Get repo key
+      ansible.builtin.get_url:
+        url: 'https://packages.sury.org/php/apt.gpg'
+        dest: /etc/apt/trusted.gpg.d/php.gpg
+        mode: '0644'
+
+    - name: Create sury repo file
+      ansible.builtin.apt_repository:
+        repo: "deb https://packages.sury.org/php/ {{ ansible_distribution_release }} main"
+        state: present

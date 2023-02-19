@@ -1,0 +1,4 @@
+- name: Continue only on Debian or Ubuntu
+  assert:
+    that:
+      - "ansible_facts.os_family == 'Debian'"
