@@ -6,6 +6,11 @@ argument_specs:
         type: "str"
         required: true
         description: "Hostname for server"
+      postfix_relayhost:
+        type: "str"
+        required: false
+        default: "undefined"
+        description: "Send all mails using specified server"
       postfix_mynetworks:
         type: "list"
         required: false
