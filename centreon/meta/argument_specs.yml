@@ -1,0 +1,31 @@
+argument_specs:
+  main:
+    short_description: Parameters for centreon role
+    options:
+      centreon_db_type:
+        type: "str"
+        required: true
+        choices:
+          - 'local'
+          - 'remote'
+        description: "Local timezone"
+      centreon_version:
+        type: "str"
+        required: false
+        default: '22.10'
+        description: "Centreon version to install"
+      centreon_php_version:
+        type: "str"
+        required: false
+        default: '8.1'
+        description: "PHP version to install"
+      centreon_enable_fix:
+        type: "bool"
+        required: false
+        default: true
+        description: "If enable bug fixing"
+      centreon_timezone:
+        type: "str"
+        required: false
+        default: 'Europe/Prague'
+        description: "Local timezone"

@@ -1,0 +1,4 @@
+dependencies:
+  - role: sury_php
+  - role: centreon_database
+    when: centreon_db_type == 'local'

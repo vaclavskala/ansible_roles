@@ -1,0 +1,6 @@
+- name: Restart centreon php
+  systemd:
+    name: "php{{ centreon_php_version }}-fpm"
+    state: restarted
+    enabled: true
+    masked: false

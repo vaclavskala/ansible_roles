@@ -1,0 +1,4 @@
+centreon_version: '22.10'
+centreon_php_version: '8.1'
+centreon_timezone: 'Europe/Prague'
+centreon_enable_fix: true

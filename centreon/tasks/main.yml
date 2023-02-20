@@ -1,0 +1,72 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: Install centreon dependencies
+  apt:
+    pkg:
+      - lsb-release
+      - ca-certificates
+      - apt-transport-https
+      - software-properties-common
+      - wget
+      - gnupg2
+    state: present
+
+- name: Get centreon repo key
+  ansible.builtin.get_url:
+    url: 'https://apt-key.centreon.com'
+    dest: /etc/apt/keyrings/centreon.asc
+    mode: '0644'
+
+- name: Create centreon repo file
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/centreon.asc] https://apt.centreon.com/repository/{{ centreon_version }}/ {{ ansible_distribution_release }} main"
+    state: present
+
+- name: Install centreon-central
+  apt:
+    pkg:
+      - centreon-central
+    state: present
+
+- name: Install nagios plugins
+  apt:
+    pkg:
+      - nagios-nrpe-plugin
+    state: present
+
+- name: Install backup script dependencies
+  apt:
+    pkg:
+      - mariadb-client
+      - bc
+    state: present
+
+- name: Set php timezone
+  ansible.builtin.lineinfile:
+    path: "/etc/php/{{ centreon_php_version }}/mods-available/centreon.ini"
+    regexp: '^date.timezone '
+    line: "date.timezone = {{ centreon_timezone }}"
+  notify: Restart centreon php
+
+- name: Include version specific fix
+  include_tasks: "fix-{{ centreon_version }}.yml"
+  when: centreon_enable_fix
+
+- name: Start and enable centreon services
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+    masked: false
+  with_items:
+    - "php{{ centreon_php_version }}-fpm"
+    - apache2
+    - centreon
+    - cbd
+    - centengine
+    - gorgoned
+    - snmptrapd
+    - centreontrapd
+    - snmpd

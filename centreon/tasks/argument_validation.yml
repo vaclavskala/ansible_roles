@@ -1,0 +1,4 @@
+- name: Continue only on Debian
+  assert:
+    that:
+      - "ansible_facts.distribution == 'Debian'"
