@@ -1,0 +1,9 @@
+argument_specs:
+  main:
+    short_description: Parameters for hd_idle role
+    options:
+      hd_idle_timeout:
+        type: "int"
+        required: false
+        default: 900
+        description: "Default timeout for hd-idle"

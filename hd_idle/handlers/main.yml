@@ -1,0 +1,6 @@
+- name: Restart hd-idle
+  systemd:
+    name: hd-idle
+    state: restarted
+    enabled: true
+    masked: false
