@@ -9,3 +9,9 @@
     pkg:
       - snapd
     state: absent
+
+- name: Remove multipathd
+  apt:
+    pkg:
+      - multipath-tools
+    state: absent
