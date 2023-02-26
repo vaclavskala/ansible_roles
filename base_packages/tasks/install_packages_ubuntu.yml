@@ -12,7 +12,7 @@
       - sysstat
       - tcpdump
       - man
-      - ncdu
+      - gdu
       - lsof
       - screen
       - tmux
