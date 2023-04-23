@@ -21,4 +21,5 @@
       - zstd
       - telnet
       - mtr
+      - bat
     state: present

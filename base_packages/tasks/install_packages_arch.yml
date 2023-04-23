@@ -24,4 +24,5 @@
       - pacman-contrib
       - inetutils
       - mtr
+      - bat
     state: present
