@@ -1,9 +1,9 @@
 {% for ip in nsd_ipv4_address %}
-udp dport 53 accept comment "allow dns for {{ ip }}"
-tcp dport 53 accept comment "allow dns for {{ ip }}"
+ip daddr {{ ip }} udp dport 53 accept comment "allow dns for {{ ip }}"
+ip daddr {{ ip }} tcp dport 53 accept comment "allow dns for {{ ip }}"
 {% endfor %}
 
 {% for ip in nsd_ipv6_address %}
-udp dport 53 accept comment "allow dns for {{ ip }}"
-tcp dport 53 accept comment "allow dns for {{ ip }}"
+ip6 daddr {{ ip }} udp dport 53 accept comment "allow dns for {{ ip }}"
+ip6 daddr {{ ip }} tcp dport 53 accept comment "allow dns for {{ ip }}"
 {% endfor %}
