@@ -14,6 +14,40 @@
     group: "{{ zsh_user }}"
     mode: '0644'
 
+- name: Create .config directory
+  ansible.builtin.file:
+    path: "{{ zsh_home }}/.config"
+    state: directory
+    owner: "{{ zsh_user }}"
+    group: "{{ zsh_user }}"
+    mode: '0700'
+
+- name: Create .config/bat/syntaxes directory
+  ansible.builtin.file:
+    path: "{{ zsh_home }}/.config/bat/syntaxes"
+    state: directory
+    owner: "{{ zsh_user }}"
+    group: "{{ zsh_user }}"
+    mode: '0755'
+
+- name: Symlink batcat as bat
+  ansible.builtin.file:
+    src: /usr/bin/batcat
+    dest: /usr/bin/bat
+    owner: root
+    group: root
+    state: link
+  when: ansible_facts.os_family == 'Debian'
+
+- name: Copy nftables syntax rules
+  copy:
+    src: nftable.syntax
+    dest: "{{ zsh_home }}/.config/bat/syntaxes/nft.sublime-syntax"
+    owner: "{{ zsh_user }}"
+    group: "{{ zsh_user }}"
+    mode: '0644'
+  notify: Rebuild bat cache
+
 - name: Copy aliases
   copy:
     src: aliases

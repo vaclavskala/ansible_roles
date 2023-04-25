@@ -1,0 +1,3 @@
+- name: Rebuild bat cache
+  command: "bat cache --build"
+  become_user: "{{ zsh_user }}"

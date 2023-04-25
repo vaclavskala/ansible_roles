@@ -1,1 +1,3 @@
 alias ip="ip -c "
+alias nlf="sudo nft list table inet filter | bat -f -l 'nft' -p"
+alias nlr="sudo nft list ruleset | bat -f -l 'nft' -p"

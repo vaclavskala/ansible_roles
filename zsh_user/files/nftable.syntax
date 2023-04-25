@@ -1,0 +1,1155 @@
+%YAML 1.2
+---
+# SRC: https://raw.githubusercontent.com/HorlogeSkynet/Nftables/master/Nftables.sublime-syntax
+
+# nftables syntax definition for Sublime Text 3+ (>= 3092).
+
+# `file_extensions` contains `nftables.conf` to match the default packaged file in Debian.
+# `first_line_match` should match (at least) this shebang `#!/usr/sbin/nft -f`.
+
+name: Nftables
+file_extensions: [nft, nftables, nftables.conf]
+first_line_match: (?:^\#![ \t]*(?:\/usr(?:\/local)?)?\/s?bin\/nft\b)
+scope: source.nftables
+hidden: false
+
+
+variables:
+  decimal: (?:[[:digit:]]+)
+  hexadecimal: (?:(?:0x)[[:xdigit:]]+)
+
+  time_string: (?:(?:\d+[wdhms])+)
+  time_units: \b(?:second|minute|hour|day|week)\b
+  identifier: (?:[[:alpha:]_][[:alnum:]_]*)
+  identifier_extended: (?:[[:alpha:]_][[:alnum:]_\-\.]*)
+
+  chain_types: \b(?:filter|route|nat)\b
+  chain_hooks: \b(?:prerouting|input|forward|output|postrouting|(?:e|in)gress)\b
+  family_types: \b(arp|bridge|inet|ip6?|netdev)\b
+  # nftables >= 0.9.6, chains priorities can be set using keywords.
+  priorities: \b(raw|mangle|(?:dst|src)nat|filter|security|out)\b
+
+  # From <https://stackoverflow.com/a/4260512>.
+  mac_address: |-
+    (?x)
+    (?:[0-9a-fA-F]{2}[:-]){5}(?:[0-9a-fA-F]{2})
+  # From <https://stackoverflow.com/a/17871737>.
+  ipv4_address: |-
+    (?x)
+    (?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3}
+    (?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])
+  ipv6_address: |-
+    (?x)
+    (?:[0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|
+    (?:[0-9a-fA-F]{1,4}:){1,7}:|
+    (?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|
+    (?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2}|
+    (?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3}|
+    (?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4}|
+    (?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5}|
+    [0-9a-fA-F]{1,4}:(?:(?::[0-9a-fA-F]{1,4}){1,6})|
+    :(?:(?::[0-9a-fA-F]{1,4}){1,7}|:)|
+    fe80:(?::[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|
+    ::(?:ffff(?::0{1,4}){0,1}:){0,1}
+    (?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}
+    (?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])|
+    (?:[0-9a-fA-F]{1,4}:){1,4}:
+    (?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}
+    (?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])
+  # From <http://blog.markhatton.co.uk/2011/03/15/regular-expressions-for-ip-addresses/>.
+  ipv4_subnet: |-
+    (?x)
+    (?:{{ipv4_address}})
+    (?:\/)
+    (?:3[0-2]|[1-2][0-9]|[0-9])
+  ipv6_subnet: |-
+    (?x)
+    (?:{{ipv6_address}})
+    (?:\/)
+    (?:12[0-8]|1[0-1][0-9]|[1-9][0-9]|[0-9])
+
+
+contexts:
+  main:
+    - include: common-blocks
+    - include: specifications
+    - include: script-commands
+
+  prototype:
+    - include: comments
+    - include: line-continuation
+
+  comments:
+    - match: (#)
+      scope: punctuation.definition.comment.nftables
+      push:
+        - meta_scope: comment.line.nftables
+
+        - match: (?=$)
+          pop: true
+
+  variables:
+    - match: (\$)({{identifier}})
+      captures:
+        1: punctuation.definition.variable.nftables
+        2: variable.other.constant.nftables
+    - match: (@)({{identifier}})
+      captures:
+        1: punctuation.definition.variable.nftables
+        2: variable.other.readwrite.set.nftables
+  _expect-constant:
+    - match: (\$)({{identifier}})
+      captures:
+        1: punctuation.definition.variable.nftables
+        2: variable.other.constant.nftables
+      pop: true
+
+  statement-separators:
+    - match: (;)
+      scope: punctuation.terminator.semi-colon.nftables
+      pop: true
+    - match: (?:$\r?\n)
+      pop: true
+
+  bail-out:
+    - match: (?=\S|$\r?\n)
+      pop: true
+
+  comma:
+    - match: (,)
+      scope: punctuation.separator.comma.nftables
+
+  colon:
+    - match: (:)
+      scope: punctuation.separator.colon.nftables
+
+  semi-colon:
+    - match: (;)
+      scope: punctuation.terminator.semi-colon.nftables
+
+  wildcard:
+    - match: (\*)
+      scope: keyword.operator.wildcard.nftables
+
+  line-continuation:
+    - match: (?:(\\)(.*)$\r?\n)
+      captures:
+        1: punctuation.separator.continuation.nftables
+        2: invalid.illegal.trailing-character.nftables
+
+  values:
+    - include: quoted-string
+    - include: time-string
+    - include: network-addresses
+    - include: numerics
+    - include: variables
+    - include: anonymous-set
+
+  quoted-string:
+    # Apparently nftables only supports double-quoted strings.
+    # `prototype` won't be propagated, but `line-continuation` has to be consumed.
+    - match: (")
+      scope: punctuation.definition.string.begin.nftables
+      with_prototype:
+        - match: (\\.)
+          scope: constant.character.escape.nftables
+        - include: line-continuation
+      push:
+        - meta_include_prototype: false
+        - meta_scope: string.quoted.double.nftables meta.string.nftables
+
+        - match: (")
+          scope: punctuation.definition.string.end.nftables
+          pop: true
+  _expect-quoted-string:
+    - match: (")
+      scope: punctuation.definition.string.begin.nftables
+      with_prototype:
+        - match: (\\.)
+          scope: constant.character.escape.nftables
+        - include: line-continuation
+      set:
+        - meta_include_prototype: false
+        - meta_scope: string.quoted.double.nftables meta.string.nftables
+
+        - match: (")
+          scope: punctuation.definition.string.end.nftables
+          pop: true
+
+  time-string:
+    - match: \b({{time_string}})\b
+      scope: string.unquoted.time-string.nftables
+  _expect-time-string:
+    - match: \b({{time_string}})\b
+      scope: string.unquoted.time-string.nftables
+      pop: true
+
+  _expect-unquoted-string:
+    - match: \b({{identifier_extended}})\b
+      scope: string.unquoted.nftables
+      pop: true
+
+  network-addresses:
+    - match: ({{mac_address}})
+      scope: constant.numeric.mac-address.nftables
+      push:
+        - match: (-)
+          scope: punctuation.separator.dash.nftables
+          push:
+            - match: ({{mac_address}})
+              scope: constant.numeric.mac-address.nftables
+              pop: true
+        - include: bail-out
+
+    - match: ({{ipv4_subnet}})
+      scope: constant.numeric.ipv4-subnet.nftables
+
+    - match: ({{ipv4_address}})
+      scope: constant.numeric.ipv4-address.nftables
+      push:
+        - match: (-)
+          scope: punctuation.separator.dash.nftables
+          push:
+            - match: ({{ipv4_address}})
+              scope: constant.numeric.ipv4-address.nftables
+              pop: true
+        - include: bail-out
+
+    - match: ({{ipv6_subnet}})
+      scope: constant.numeric.ipv6-subnet.nftables
+
+    - match: ({{ipv6_address}})
+      scope: constant.numeric.ipv6-address.nftables
+      push:
+        - match: (-)
+          scope: punctuation.separator.dash.nftables
+          push:
+            - match: ({{ipv6_address}})
+              scope: constant.numeric.ipv6-address.nftables
+              pop: true
+        - include: bail-out
+
+  numerics:
+    - match: \b(?:({{decimal}})|({{hexadecimal}}))\b
+      captures:
+        1: constant.numeric.integer.decimal.nftables
+        2: constant.numeric.integer.hexadecimal.nftables
+      push:
+        - match: (-)
+          scope: punctuation.separator.dash.nftables
+          push: _expect-numeric
+        - include: bail-out
+
+  _expect-numeric:
+    - match: ({{decimal}})
+      scope: constant.numeric.integer.decimal.nftables
+      pop: true
+    - match: ({{hexadecimal}})
+      scope: constant.numeric.integer.hexadecimal.nftables
+      pop: true
+
+  _anonymous-set-content:
+    # Anonymous sets may contain values, operators and specific separators.
+    # Elements in the set may have a `timeout` (death-date).
+    - match: \b(timeout)\b
+      scope: storage.type.set-element-timeout.nftables
+      push: _expect-time-string
+
+    - include: rule-definitions
+    - include: wildcard
+
+  anonymous-set:
+    - match: ({)
+      scope: punctuation.section.braces.begin.anonymous-set.nftables
+      push:
+        - meta_scope: meta.object.anonymous-set.nftables
+
+        - include: _anonymous-set-content
+
+        - match: (})
+          scope: punctuation.section.braces.end.anonymous-set.nftables
+          pop: true
+  _expect-anonymous-set-or-constant-assignment:
+    - match: (=)
+      scope: keyword.operator.assignment.nftables
+      set:
+        - include: _expect-constant
+
+        - match: ({)
+          scope: punctuation.section.braces.begin.anonymous-set.nftables
+          set:
+            - meta_scope: meta.object.anonymous-set.nftables
+
+            - include: _anonymous-set-content
+
+            - match: (})
+              scope: punctuation.section.braces.end.anonymous-set.nftables
+              pop: true
+
+  assignment:
+    - match: (=)
+      scope: keyword.operator.assignment.nftables
+      set:
+        - include: values
+        - match: \b({{identifier}})\b
+          scope: string.unquoted.nftables
+          pop: true
+        - include: statement-separators
+
+  common-blocks:
+    # Defines.
+    - match: \b(?:re)?define\b
+      scope: keyword.control.define.nftables
+      push:
+        - match: \b({{identifier}})\b
+          scope: variable.other.constant.nftables
+          set: assignment
+    - match: \b(undefine)\b
+      scope: keyword.control.undefine.nftables
+      push:
+        - match: \b({{identifier}})\b
+          scope: variable.other.constant.nftables
+          pop: true
+
+    # Include.
+    - match: \b(include)\b
+      scope: keyword.control.import.nftables
+      push:
+        - meta_scope: meta.path.nftables
+
+        - include: quoted-string
+        - include: statement-separators
+
+    - include: semi-colon
+
+  script-commands:
+    - match: |-
+        (?x)
+        \b(
+          add|replace|create|
+          insert|delete|
+          get|list|
+          reset|flush|
+          rename|
+          import|export|
+          monitor|describe
+        )\b
+      scope: keyword.other.command.nftables
+      push:
+        - match: \b(table)\b
+          scope: storage.type.table.nftables keyword.declaration.table.nftables
+          set:
+            - include: family-types
+            - match: \b({{identifier_extended}})\b
+              scope: entity.name.table.nftables
+              set:
+                - match: ({)
+                  scope: punctuation.section.block.begin.table.nftables
+                  set:
+                    - meta_scope: meta.block.table.nftables
+
+                    - include: table-flags
+                    - include: statement-separators
+
+                    - match: (})
+                      scope: punctuation.section.block.end.table.nftables
+                      pop: true
+
+                - include: statement-separators
+
+        - match: \b(chain)\b
+          scope: storage.type.chain.nftables keyword.declaration.chain.nftables
+          set:
+            - include: family-types
+            - match: \b({{identifier_extended}})\b
+              scope: variable.other.readwrite.table.nftables
+              set: chain-specs
+
+        - match: \b(flowtable)\b
+          scope: storage.type.flowtable.nftables keyword.declaration.flowtable.nftables
+          set:
+            - include: family-types
+            - match: \b({{identifier_extended}})\b
+              scope: variable.other.readwrite.table.nftables
+              set: flowtable-specs
+
+        - match: \b(rule)\b
+          scope: storage.type.rule.nftables keyword.declaration.rule.nftables
+          set: rule-command
+
+        - match: \b(set|map)\b
+          scope: storage.type.set.nftables keyword.declaration.set.nftables
+          set:
+            - include: family-types
+            - match: \b({{identifier_extended}})\b
+              scope: variable.other.readwrite.table.nftables
+              set: set-specs
+
+        - match: \b(element)\b
+          scope: storage.type.element.nftables keyword.declaration.element.nftables
+          set:
+            - include: family-types
+            - match: \b({{identifier_extended}})\b
+              scope: variable.other.readwrite.table.nftables
+              set:
+                - match: \b({{identifier_extended}})\b
+                  scope: variable.other.readwrite.set.nftables
+                  set:
+                    - include: anonymous-set
+                    - include: statement-separators
+
+        - match: \b(secmark)\b
+          scope: storage.type.secmark.nftables keyword.declaration.secmark.nftables
+          set:
+            - include: family-types
+            - match: \b({{identifier_extended}})\b
+              scope: variable.other.readwrite.table.nftables
+              set: secmark-specs
+
+        - match: \b(synproxy)\b
+          scope: storage.type.synproxy.nftables keyword.declaration.synproxy.nftables
+          set:
+            - include: family-types
+            - match: \b({{identifier_extended}})\b
+              scope: variable.other.readwrite.table.nftables
+              set: synproxy-specs
+
+        - match: \b(limit)\b
+          scope: storage.type.limit.nftables keyword.declaration.limit.nftables
+          set:
+            - include: family-types
+            - match: \b({{identifier_extended}})\b
+              scope: variable.other.readwrite.table.nftables
+              set: limit-specs
+
+        - match: \b(quota)\b
+          scope: storage.type.quota.nftables keyword.declaration.quota.nftables
+          set:
+            - include: family-types
+            - match: \b({{identifier_extended}})\b
+              scope: variable.other.readwrite.table.nftables
+              set: quota-specs
+
+        - match: (?:\bct\s+(expectation)\b)
+          captures:
+            1: storage.type.ct-expectation.nftables keyword.declaration.ct-expectation.nftables
+          set: ct-expectation-specs
+
+        - match: (?:\bct\s+(helper)\b)
+          captures:
+            1: storage.type.ct-helper.nftables keyword.declaration.ct-helper.nftables
+          set: ct-helper-specs
+
+        - match: (?:\bct\s+(timeout)\b)
+          captures:
+            1: storage.type.ct-timeout.nftables keyword.declaration.ct-timeout.nftables
+          set: ct-timeout-specs
+
+        - match: \b(ruleset)\b
+          scope: keyword.other.ruleset.nftables
+          set:
+            - include: family-types
+            - include: statement-separators
+
+        - include: rule-command
+        - include: statement-separators
+  rule-command:
+    - include: family-types
+    - match: \b({{identifier_extended}})\b
+      scope: variable.other.readwrite.table.nftables
+      set:
+        - match: \b({{identifier_extended}})\b
+          scope: variable.other.readwrite.chain.nftables
+          set:
+            - match: \b(handle|position)\b
+              scope: keyword.other.handle.nftables
+              push: _expect-numeric
+
+            - include: rule-definitions
+            - include: rule-statements
+            - include: statement-separators
+
+        # Some commands do not require to specify a chain, so we must allow it to end right here.
+        - include: statement-separators
+
+  specifications:
+    - include: table-specs
+
+    - match: \b(chain)\b
+      scope: storage.type.chain.nftables keyword.declaration.chain.nftables
+      push:
+        - include: family-types
+        - match: \b({{identifier_extended}})\b
+          scope: variable.other.readwrite.table.nftables
+          set: chain-specs
+
+    - match: \b(flowtable)\b
+      scope: storage.type.flowtable.nftables keyword.declaration.flowtable.nftables
+      push:
+        - include: family-types
+        - match: \b({{identifier_extended}})\b
+          scope: variable.other.readwrite.table.nftables
+          set: flowtable-specs
+
+    - match: \b(set|map)\b
+      scope: storage.type.set.nftables keyword.declaration.set.nftables
+      push:
+        - include: family-types
+        - match: \b({{identifier_extended}})\b
+          scope: variable.other.readwrite.table.nftables
+          set: set-specs
+
+    - match: \b(secmark)\b
+      scope: storage.type.secmark.nftables keyword.declaration.secmark.nftables
+      push:
+        - include: family-types
+        - match: \b({{identifier_extended}})\b
+          scope: variable.other.readwrite.table.nftables
+          set: secmark-specs
+
+    - match: \b(synproxy)\b
+      scope: storage.type.synproxy.nftables keyword.declaration.synproxy.nftables
+      push:
+        - include: family-types
+        - match: \b({{identifier_extended}})\b
+          scope: variable.other.readwrite.table.nftables
+          set: synproxy-specs
+
+    - match: \b(limit)\b
+      scope: storage.type.limit.nftables keyword.declaration.limit.nftables
+      push:
+        - include: family-types
+        - match: \b({{identifier_extended}})\b
+          scope: variable.other.readwrite.table.nftables
+          set: limit-specs
+
+    - match: \b(quota)\b
+      scope: storage.type.quota.nftables keyword.declaration.quota.nftables
+      push:
+        - include: family-types
+        - match: \b({{identifier_extended}})\b
+          scope: variable.other.readwrite.table.nftables
+          set: quota-specs
+
+    - match: (?:\bct\s+(expectation)\b)
+      captures:
+        1: storage.type.ct-expectation.nftables keyword.declaration.ct-expectation.nftables
+      push:
+        - include: family-types
+        - match: \b({{identifier_extended}})\b
+          scope: variable.other.readwrite.table.nftables
+          set: ct-expectation-specs
+
+    - match: (?:\bct\s+(helper)\b)
+      captures:
+        1: storage.type.ct-helper.nftables keyword.declaration.ct-helper.nftables
+      push:
+        - include: family-types
+        - match: \b({{identifier_extended}})\b
+          scope: variable.other.readwrite.table.nftables
+          set: ct-helper-specs
+
+    - match: (?:\bct\s+(timeout)\b)
+      captures:
+        1: storage.type.ct-timeout.nftables keyword.declaration.ct-timeout.nftables
+      push:
+        - include: family-types
+        - match: \b({{identifier_extended}})\b
+          scope: variable.other.readwrite.table.nftables
+          set: ct-timeout-specs
+
+  table-specs:
+    - match: \b(table)\b
+      scope: storage.type.table.nftables keyword.declaration.table.nftables
+      push:
+        - include: family-types
+        - match: \b({{identifier_extended}})\b
+          scope: entity.name.table.nftables
+          set:
+            - match: ({)
+              scope: punctuation.section.block.begin.table.nftables
+              set:
+                - meta_scope: meta.block.table.nftables
+
+                - include: table-flags
+
+                - include: common-blocks
+
+                - match: \b(chain)\b
+                  scope: storage.type.chain.nftables keyword.declaration.chain.nftables
+                  push: chain-specs
+
+                - match: \b(flowtable)\b
+                  scope: storage.type.flowtable.nftables keyword.declaration.flowtable.nftables
+                  push: flowtable-specs
+
+                - match: \b(set|map)\b
+                  scope: storage.type.set.nftables keyword.declaration.set.nftables
+                  push: set-specs
+
+                - match: \b(secmark)\b
+                  scope: storage.type.secmark.nftables keyword.declaration.secmark.nftables
+                  push: secmark-specs
+
+                - match: \b(synproxy)\b
+                  scope: storage.type.synproxy.nftables keyword.declaration.synproxy.nftables
+                  push: synproxy-specs
+
+                - match: \b(limit)\b
+                  scope: storage.type.limit.nftables keyword.declaration.limit.nftables
+                  push: limit-specs
+
+                - match: \b(quota)\b
+                  scope: storage.type.quota.nftables keyword.declaration.quota.nftables
+                  push: quota-specs
+
+                - match: (?:\bct\s+(expectation)\b)
+                  captures:
+                    1: storage.type.ct-expectation.nftables keyword.declaration.ct-expectation.nftables
+                  push: ct-expectation-specs
+
+                - match: (?:\bct\s+(helper)\b)
+                  captures:
+                    1: storage.type.ct-helper.nftables keyword.declaration.ct-helper.nftables
+                  push: ct-helper-specs
+
+                - match: (?:\bct\s+(timeout)\b)
+                  captures:
+                    1: storage.type.ct-timeout.nftables keyword.declaration.ct-timeout.nftables
+                  push: ct-timeout-specs
+
+                - match: (})
+                  scope: punctuation.section.block.end.table.nftables
+                  pop: true
+
+  chain-specs:
+    - match: \b({{identifier_extended}})\b
+      scope: entity.name.chain.nftables
+      set:
+        - match: ({)
+          scope: punctuation.section.block.begin.chain.nftables
+          set:
+            - meta_scope: meta.block.chain.nftables
+
+            - include: _consume-rule-matches-type
+            - match: \b(type)\b
+              scope: storage.type.chain-type.nftables
+              push:
+                - match: ({{chain_types}})
+                  scope: constant.language.chain-type.nftables
+                  set:
+                    - match: \b(hook)\b
+                      scope: storage.type.chain-hook.nftables
+                      set:
+                        - match: ({{chain_hooks}})
+                          scope: constant.language.hook.nftables
+                          set:
+                            - match: \b(device)\b
+                              scope: storage.type.chain-device.nftables
+                              push:
+                                - include: _expect-constant
+                                - include: _expect-quoted-string
+                                - include: _expect-unquoted-string
+
+                            - match: \b(devices)\b
+                              scope: storage.type.chain-devices.nftables
+                              push: _expect-anonymous-set-or-constant-assignment
+
+                            - match: \b(priority)\b
+                              scope: storage.type.chain-priority.nftables
+                              set:
+                                - match: ({{priorities}})
+                                  scope: constant.language.chain-priority.nftables
+                                - include: numerics
+                                - include: plus-or-dash
+                                - include: statement-separators
+
+            - match: \b(policy)\b
+              scope: storage.type.chain-policy.nftables
+              push:
+                - match: \b(accept|drop)\b
+                  scope: constant.language.chain-policy.nftables
+                  pop: true
+
+            - include: rule-definitions
+            - include: rule-statements
+
+            - include: semi-colon
+            - match: (})
+              scope: punctuation.section.block.end.chain.nftables
+              pop: true
+
+  flowtable-specs:
+    - match: \b({{identifier_extended}})\b
+      scope: entity.name.flowtable.nftables
+      set:
+        - match: ({)
+          scope: punctuation.section.block.begin.flowtable.nftables
+          set:
+            - meta_scope: meta.block.flowtable.nftables
+
+            # Flowtable settings.
+            - match: \b(hook)\b
+              scope: storage.type.flowtable-hook.nftables
+              push:
+                - match: ({{chain_hooks}})
+                  scope: constant.language.hook.nftables
+                  set:
+                    - match: \b(priority)\b
+                      scope: storage.type.flowtable-priority.nftables
+                      set:
+                        - match: ({{priorities}})
+                          scope: constant.language.chain-priority.nftables
+                        - include: numerics
+                        - include: plus-or-dash
+                        - include: statement-separators
+
+            - match: \b(devices)\b
+              scope: storage.type.flowtable-devices.nftables
+              push: _expect-anonymous-set-or-constant-assignment
+
+            - match: \b(flags)\b
+              scope: storage.type.flowtable-flags.nftables
+              push:
+                - match: \b(offload)\b
+                  scope: constant.language.flowtable-flag.nftables
+                - include: comma
+                - include: statement-separators
+
+            - match: \b(counter)\b
+              scope: storage.type.flowtable-counter.nftables
+
+            - include: semi-colon
+            - match: (})
+              scope: punctuation.section.block.end.flowtable.nftables
+              pop: true
+
+  set-specs:
+    - match: \b({{identifier_extended}})\b
+      scope: entity.name.set.nftables
+      set:
+        - match: ({)
+          scope: punctuation.section.braces.begin.named-set.nftables
+          set:
+            - meta_scope: meta.object.named-set.nftables
+
+            - match: \b(type)\b
+              scope: storage.type.set-type.nftables
+              push:
+                - match: \b((?:ipv[46]|ether)_addr|inet_(?:proto|service)|counter|ifname|mark)\b
+                  scope: constant.language.data-type.nftables
+                - match: \b(verdict)\b
+                  scope: constant.language.verdict.nftables
+                - include: dot-operator
+                - include: colon
+                - include: verdict-statements
+                - include: statement-separators
+            - match: \b(typeof)\b
+              scope: storage.type.set-typeof.nftables
+              push:
+                - match: \b(verdict)\b
+                  scope: constant.language.verdict.nftables
+                - include: values
+                - include: dot-operator
+                - include: colon
+                - include: statement-separators
+            - match: \b(timeout)\b
+              scope: storage.type.set-timeout.nftables
+              push: _expect-time-string
+            - match: \b(flags)\b
+              scope: storage.type.set-flags.nftables
+              push:
+                - match: \b(constant|dynamic|interval|timeout)\b
+                  scope: constant.language.set-flag.nftables
+                - include: comma
+                - include: statement-separators
+            - match: \b(gc-interval)\b
+              scope: storage.type.set-gcinterval.nftables
+              push: _expect-time-string
+            - match: \b(elements)\b
+              scope: storage.type.set-elements.nftables
+              push: _expect-anonymous-set-or-constant-assignment
+            - match: \b(size)\b
+              scope: storage.type.set-size.nftables
+              push: _expect-numeric
+            - match: \b(policy)\b
+              scope: storage.type.set-policy.nftables
+              push:
+                - match: \b(performance|memory)\b
+                  scope: constant.language.set-policy.nftables
+                  pop: true
+            - match: \b(comment)\b
+              scope: storage.type.set-comments.nftables
+              push: _expect-quoted-string
+            - match: \b(counter)\b
+              scope: storage.type.set-counter.nftables
+
+            - include: semi-colon
+            - match: (})
+              scope: punctuation.section.braces.end.named-set.nftables
+              pop: true
+
+  secmark-specs:
+    - match: \b({{identifier_extended}})\b
+      scope: entity.name.secmark.nftables
+      set:
+        - match: ({)
+          scope: punctuation.section.braces.begin.secmark.nftables
+          set:
+            - meta_scope: meta.object.secmark.nftables
+
+            - include: quoted-string
+
+            - include: semi-colon
+            - match: (})
+              scope: punctuation.section.braces.end.secmark.nftables
+              pop: true
+
+  synproxy-specs:
+    - match: \b({{identifier_extended}})\b
+      scope: entity.name.synproxy.nftables
+      set:
+        - match: ({)
+          scope: punctuation.section.braces.begin.synproxy.nftables
+          set:
+            - meta_scope: meta.object.synproxy.nftables
+
+            - match: \b(mss)\b
+              scope: storage.type.synproxy-mss.nftables
+              push: _expect-numeric
+
+            - match: \b(wscale)\b
+              scope: storage.type.synproxy-wscale.nftables
+              push: _expect-numeric
+
+            - match: \b(timestamp)\b
+              scope: storage.type.synproxy-timestamp.nftables
+
+            - match: \b(sack-perm)\b
+              scope: storage.type.synproxy-sack-perm.nftables
+
+            - include: semi-colon
+            - match: (})
+              scope: punctuation.section.braces.end.synproxy.nftables
+              pop: true
+
+  _limit-config:
+      - match: (/)
+        scope: punctuation.separator.limit-rate.nftables
+      - match: \b(over|until)\b
+        scope: constant.language.limit-mode.nftables
+        push: _expect-numeric
+      - match: \b(burst)\b
+        scope: constant.language.limit-burst.nftables
+        push: _expect-numeric
+      - match: ({{time_units}})
+        scope: string.unquoted.time-string.nftables
+      - match: \b([bk]?bytes|packets)\b
+      - include: numerics
+
+  limit-specs:
+    - match: \b({{identifier_extended}})\b
+      scope: entity.name.limit.nftables
+      set:
+        - match: ({)
+          scope: punctuation.section.braces.begin.limit.nftables
+          set:
+            - meta_scope: meta.object.limit.nftables
+
+            - match: \b(rate)\b
+              scope: storage.type.limit-rate.nftables
+              push:
+                - include: _limit-config
+                - include: statement-separators
+                # We reach end of `rate` definition, leave this context without consuming '}'.
+                - match: (?=})
+                  pop: true
+
+            - match: \b(comment)\b
+              scope: storage.type.limit-comments.nftables
+              push: _expect-quoted-string
+
+            - include: semi-colon
+            - match: (})
+              scope: punctuation.section.braces.end.limit.nftables
+              pop: true
+
+  _quota-config:
+      - match: \b(over|until)\b
+        scope: constant.language.quota-mode.nftables
+        push: _expect-numeric
+      - match: \b(used)\b
+        scope: constant.language.quota-used.nftables
+        push: _expect-numeric
+
+  quota-specs:
+    - match: \b({{identifier_extended}})\b
+      scope: entity.name.quota.nftables
+      set:
+        - include: _quota-config
+        - include: statement-separators
+
+        - match: ({)
+          scope: punctuation.section.braces.begin.quota.nftables
+          set:
+            - meta_scope: meta.object.quota.nftables
+
+            - include: _quota-config
+
+            - match: \b(comment)\b
+              scope: storage.type.quota-comments.nftables
+              push: _expect-quoted-string
+
+            - include: semi-colon
+            - match: (})
+              scope: punctuation.section.braces.end.quota.nftables
+              pop: true
+
+  ct-expectation-specs:
+    - match: \b({{identifier_extended}})\b
+      scope: entity.name.ct-expectation.nftables
+      set:
+        - match: ({)
+          scope: punctuation.section.braces.begin.ct-expectation.nftables
+          set:
+            - meta_scope: meta.object.ct-expectation.nftables
+
+            - match: \b(protocol)\b
+              scope: storage.type.ct-expectation-protocol.nftables
+              push:
+                - match: \b(tcp|udp)\b
+                  scope: constant.language.l4-proto.nftables
+                  pop: true
+
+            - match: \b(dport)\b
+              scope: storage.type.ct-expectation-dport.nftables
+              push: _expect-numeric
+
+            - match: \b(timeout)\b
+              scope: storage.type.ct-expectation-timeout.nftables
+              push: _expect-time-string
+
+            - match: \b(size)\b
+              scope: storage.type.ct-expectation-size.nftables
+              push: _expect-numeric
+
+            - match: \b(l3proto)\b
+              scope: storage.type.ct-expectation-l3proto.nftables
+              push:
+                - match: ({{family_types}})
+                  scope: constant.language.family-type.nftables
+                  pop: true
+
+            - include: semi-colon
+            - match: (})
+              scope: punctuation.section.braces.end.ct-expectation.nftables
+              pop: true
+
+  ct-helper-specs:
+    - match: \b({{identifier_extended}})\b
+      scope: entity.name.ct-helper.nftables
+      set:
+        - match: ({)
+          scope: punctuation.section.braces.begin.ct-helper.nftables
+          set:
+            - meta_scope: meta.object.ct-helper.nftables
+
+            - match: \b(type)\b
+              scope: storage.type.ct-helper-type.nftables
+              push:
+                - include: quoted-string
+                - match: \b(protocol)\b
+                  scope: storage.type.ct-helper-protocol.nftables
+                  set:
+                    - match: \b(tcp|udp)\b
+                      scope: constant.language.l4-proto.nftables
+                      pop: true
+
+            - match: \b(l3proto)\b
+              scope: storage.type.ct-helper-l3proto.nftables
+              push:
+                - match: ({{family_types}})
+                  scope: constant.language.family-type.nftables
+                  pop: true
+
+            - include: semi-colon
+            - match: (})
+              scope: punctuation.section.braces.end.ct-helper.nftables
+              pop: true
+
+  ct-timeout-specs:
+    - match: \b({{identifier_extended}})\b
+      scope: entity.name.ct-timeout.nftables
+      set:
+        - match: ({)
+          scope: punctuation.section.braces.begin.ct-timeout.nftables
+          set:
+            - meta_scope: meta.object.ct-timeout.nftables
+
+            - match: \b(protocol)\b
+              scope: storage.type.ct-timeout-protocol.nftables
+              push:
+                - match: \b(tcp|udp)\b
+                  scope: constant.language.l4-proto.nftables
+                  pop: true
+
+            - match: \b(policy)\b
+              scope: storage.type.ct-timeout-policy.nftables
+              push: _expect-anonymous-set-or-constant-assignment
+
+            - match: \b(l3proto)\b
+              scope: storage.type.ct-timeout-l3proto.nftables
+              push:
+                - match: ({{family_types}})
+                  scope: constant.language.family-type.nftables
+                  pop: true
+
+            - include: semi-colon
+            - match: (})
+              scope: punctuation.section.braces.end.ct-timeout.nftables
+              pop: true
+
+  family-types:
+    - match: ({{family_types}})
+      scope: constant.language.family-type.nftables
+
+  table-flags:
+    - match: \b(flags)\b
+      scope: storage.type.table-flags.nftables
+      push:
+        - match: \b(dormant|owner)\b
+          scope: constant.language.table-flag.nftables
+        - include: comma
+        - include: statement-separators
+
+  verdict-statements:
+    - match: \b(accept|drop|queue|continue|return|tproxy)\b
+      scope: keyword.control.rule-statement.verdict.nftables
+    - match: \b(jump|goto)\b
+      scope: keyword.control.rule-statement.verdict.nftables
+      push:
+        - match: \b({{identifier_extended}})\b
+          scope: variable.other.readwrite.chain.nftables
+          pop: true
+
+        - match: ({)
+          scope: punctuation.section.braces.begin.implicit-chain.nftables
+          set:
+            - meta_scope: meta.block.implicit-chain.nftables
+
+            - include: rule-definitions
+            - include: rule-statements
+
+            - include: semi-colon
+            - match: (})
+              scope: punctuation.section.braces.end.implicit-chain.nftables
+              pop: true
+
+  rule-statements:
+    - include: _consume-status-nat
+    - match: |-
+        (?x)
+        \b(
+          log|reject|counter|
+          [ds]nat|masquerade|redirect|dup|fwd|
+          set|flow|notrack|
+          add|update|delete
+        )\b
+      scope: keyword.control.rule-statement.nftables
+
+    # Handle `limit` verdict specifically as we want to scope its definition.
+    - match: \b(limit)\b
+      scope: keyword.control.rule-statement.nftables
+      push:
+        - match: \b(rate)\b
+          scope: storage.type.limit-rate.nftables
+          set:
+            - include: _limit-config
+            - include: bail-out
+
+  rule-definitions:
+    # Allows many various tokens in rules (additionally to `prototype`).
+    - include: values
+    - include: operators
+    - include: comma
+    - include: colon
+
+    # Consumes and scopes known stateful objects keywords.
+    - match: \b(v?map)\b
+      scope: storage.type.map.nftables keyword.declaration.map.nftables
+    - match: \b(quota)\b
+      scope: storage.type.quota.nftables keyword.declaration.quota.nftables
+    - match: \b(synproxy)\b
+      scope: storage.type.synproxy.nftables keyword.declaration.synproxy.nftables
+    - match: (?:\bct\s+(expectation)\b)
+      captures:
+        1: storage.type.ct-expectation.nftables keyword.declaration.ct-expectation.nftables
+    - match: (?:\bct\s+(helper)\b)
+      captures:
+        1: storage.type.ct-helper.nftables keyword.declaration.ct-helper.nftables
+    - match: (?:\bct\s+(timeout)\b)
+      captures:
+        1: storage.type.ct-timeout.nftables keyword.declaration.ct-timeout.nftables
+
+    # Each rules should (might ?) have (non-)terminal statement(s).
+    - include: verdict-statements
+
+  bits-checking:
+    - match: ([!/])
+      scope: keyword.operator.bitwise.nftables
+  operators:
+    - match: \b(eq|ne|[gl][et]|numgen|(?:j|sym)hash)\b
+      scope: keyword.operator.arithmetic.nftables
+    - match: (&|\||\<\<|\>\>|\^)
+      scope: keyword.operator.bitwise.nftables
+    - match: ([!=]=|[\<\>]=?)
+      scope: keyword.operator.arithmetic.nftables
+    - match: \b(and|x?or|[lr]shift)\b
+      scope: keyword.operator.word.nftables
+    - include: bits-checking
+    - include: plus-or-dash
+    - include: dot-operator
+
+  plus-or-dash:
+    - match: \B(\+|-)
+      scope: keyword.operator.arithmetic.nftables
+
+  dot-operator:
+    - match: \B(\.)\B
+      scope: keyword.operator.concatenation.nftables
+
+  # Below contexts require further explanations.
+  # Sublime Text >= 3103 ships a specific optimized REGEXP engine, not supporting look-behinds.
+  # See <https://www.sublimetext.com/blog/articles/sublime-text-3-build-3103> for external reference.
+  #
+  # In order to make this syntax definition working against this engine, we have to get rid of look-behinds.
+  # As a workaround, we define here contexts that consume tokens we shouldn't be matching elsewhere.
+  _consume-rule-matches-type:
+    # Consume some rule matches using the `type` keyword".
+    - match: (?:\b(?:ether|dccp|icmp(?:v6|x)?|mh|rt)\s+type\b)
+
+    # Consumes `fib ${key} ${data}` (as `data` **MIGHT** be `type`).
+    # See <https://wiki.nftables.org/wiki-nftables/index.php/Routing_information#fib>.
+    - match: \bfib\b
+      push:
+        # `${key}` might be the dot operator (`.`), so we must match it as well.
+        - include: dot-operator
+        # We assume that `fib` must be followed by a (known) `${data}` expression.
+        # So the first encountered one will act as a cue to leave this context.
+        - match: \b(oif(?:name)?|type)\b
+          pop: true
+
+  _consume-status-nat:
+    # Consume `ct status` rule matches using `[ds]nat`.
+    - match: (?:\bct\s+status\s+)
+      push:
+        # Bits checking may be performed starting with nftables 0.9.9.
+        - include: bits-checking
+
+        # Consume any repetition of `[ds]nat` separated by a comma (,).
+        - match: (?:(?:\b(?:[ds]nat)\b|(,))+)
+          captures:
+            1: punctuation.separator.comma.nftables
+          pop: true
+
+        - include: bail-out
