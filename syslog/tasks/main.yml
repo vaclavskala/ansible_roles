@@ -49,8 +49,8 @@
         path: "{{ syslog_remote_dir }}"
         state: directory
         owner: root
-        group: root
-        mode: 0700
+        group: "{{ syslog_group }}"
+        mode: 0750
 
     - name: Copy log_host.conf
       template:
