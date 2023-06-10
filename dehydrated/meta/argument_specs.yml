@@ -1,0 +1,8 @@
+argument_specs:
+  main:
+    short_description: Parameters for dehydrated role
+    options:
+      dehydrated_binary:
+        type: "str"
+        required: false
+        default: "/usr/bin/dehydrated"

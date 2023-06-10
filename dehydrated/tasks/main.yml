@@ -1,0 +1,48 @@
+- name: Install dehydrated
+  package:
+    name: dehydrated
+    state: present
+
+- name: Copy dehydrated conf
+  template:
+    src: "config.j2"
+    dest: "/etc/dehydrated/config"
+    owner: "root"
+    group: "root"
+    mode: "644"
+
+- name: Create /var/www/letsencrypt/.well-known/ directory
+  file:
+    path: '/var/www/letsencrypt/.well-known/'
+    state: directory
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+    mode: "755"
+
+- name: "Change owner of /etc/dehydrated/ to {{ dehydrated_user }}"
+  file:
+    path: '/etc/dehydrated/ '
+    state: directory
+    owner: "{{ dehydrated_user }}"
+    group: "{{ dehydrated_user }}"
+    mode: "755"
+
+- name: "Change owner of /etc/dehydrated/* to {{ dehydrated_user }}"
+  file:
+    path: '/etc/dehydrated/{{ item }}'
+    state: directory
+    owner: "{{ dehydrated_user }}"
+    group: "{{ dehydrated_user }}"
+    mode: "700"
+  with_items:
+    - "accounts"
+    - "certs"
+    - "chains"
+
+- name: Creates /var/www/letsencrypt/.well-known/acme-challenge directory
+  file:
+    path: '/var/www/letsencrypt/.well-known/acme-challenge'
+    state: directory
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+    mode: "755"

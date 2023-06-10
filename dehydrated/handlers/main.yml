@@ -1,0 +1,3 @@
+- name: Generate certificates
+  ansible.builtin.command:
+    cmd: "{{ dehydrated_binary }} -c -g"
