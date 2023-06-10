@@ -1,0 +1,67 @@
+argument_specs:
+  main:
+    short_description: Parameters for nginx_create_vhost role
+    options:
+      nginx_create_vhost_proxy_port:
+        type: "int"
+        required: false
+        default: "80"
+        description: "Proxy target port"
+      nginx_create_vhost_proxy_protocol:
+        type: "str"
+        required: false
+        default: 'http'
+        choices:
+          - 'http'
+          - 'https'
+        description: "Proxy target protocol"
+      nginx_create_vhost_keepalive_count:
+        type: "int"
+        required: false
+        default: "8"
+        description: "Max number of backend keepalived connections"
+      nginx_create_vhost_keepalive_timeout:
+        type: "int"
+        required: false
+        default: "600"
+        description: "How many seconds wait before close keepalived connection"
+      nginx_create_vhost_use_dehydrated:
+        type: "bool"
+        required: false
+        default: true
+        description: "If use dehydrated or custom ssl certificate"
+      nginx_create_vhost_ssl_cert:
+        type: "str"
+        required: false
+        description: "Path to proxy custom ssl cert"
+      nginx_create_vhost_ssl_key:
+        type: "str"
+        required: false
+        description: "Path to proxy custom ssl key"
+      nginx_create_vhost_ip:
+        type: "list"
+        elements: 'str'
+        required: false
+        description: "On which IP listen"
+      nginx_create_vhost_domain:
+        type: "list"
+        elements: 'str'
+        required: false
+        description: "List of domain names"
+      nginx_create_vhost_proxy_ip:
+        type: "list"
+        elements: 'str'
+        required: false
+        description: "List of backends"
+      nginx_create_vhost_type:
+        type: "str"
+        required: false
+        default: 'proxy'
+        choices:
+          - 'proxy'
+        description: "Vhost type"
+      nginx_create_vhost_body_size:
+        type: "str"
+        required: false
+        default: "1m"
+        description: "Nginx client_max_body_size parameter"

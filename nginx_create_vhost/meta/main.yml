@@ -1,0 +1,4 @@
+dependencies:
+  - role: nginx
+  - role: dehydrated
+    when: nginx_create_vhost_use_dehydrated

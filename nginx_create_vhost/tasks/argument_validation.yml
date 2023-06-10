@@ -1,0 +1,24 @@
+- name: Assert nginx_create_vhost_ip is IP address
+  assert:
+    that:
+      - "item | ansible.netcommon.ipaddr"
+  loop: "{{ nginx_create_vhost_ip }}"
+
+- name: Assert nginx_create_vhost_proxy_ip is IP address
+  assert:
+    that:
+      - "item | ansible.netcommon.ipaddr"
+  loop: "{{ nginx_create_vhost_proxy_ip }}"
+
+- name: Assert nginx_create_vhost_proxy_port is in range of unix ports
+  assert:
+    that:
+      - "nginx_create_vhost_proxy_port > 0"
+      - "nginx_create_vhost_proxy_port < 65535"
+
+- name: If dehydrated not used check if cert and key defined
+  assert:
+    that:
+      - "nginx_create_vhost_ssl_cert is defined"
+      - "nginx_create_vhost_ssl_key is defined"
+  when: "not nginx_create_vhost_use_dehydrated"
