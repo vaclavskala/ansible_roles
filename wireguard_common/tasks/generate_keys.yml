@@ -13,7 +13,8 @@
     chdir: "{{ '/etc/wireguard/' + wireguard_interface_name }}"
 
 - name: Generate public key
-  shell: 'set -o pipefail && cat privkey | wg pubkey > pubkey'
+#  shell: 'set -o pipefail && cat privkey | wg pubkey > pubkey'
+  shell: 'cat privkey | wg pubkey > pubkey'
   args:
     creates: 'pubkey'
     chdir: "{{ '/etc/wireguard/' + wireguard_interface_name }}"

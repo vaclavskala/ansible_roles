@@ -25,7 +25,7 @@
     dest: '/etc/mysql/mariadb.conf.d/90-tunning.cnf'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: Restart mariadb
 
 - name: Increase open files
@@ -34,7 +34,7 @@
     dest: '/etc/systemd/system/mariadb.service.d/override.conf'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify:
     - Systemd daemon-reload
     - Restart mariadb
@@ -51,5 +51,5 @@
     dest: "/etc/cron.d/mariadb"
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   when: mariadb_cron

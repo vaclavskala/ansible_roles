@@ -14,13 +14,13 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: '0755'
 
 - name: Copy common postfix configuration
   template:
     src: common.cf.j2
     dest: /etc/postfix/conf.d/01-common.cf
-    mode: 0644
+    mode: '0644'
     owner: root
     group: root
 
@@ -28,7 +28,7 @@
   template:
     src: relayhost.cf.j2
     dest: /etc/postfix/conf.d/60-relayhost.cf
-    mode: 0644
+    mode: '0644'
     owner: root
     group: root
   when: postfix_relayhost is defined
@@ -37,7 +37,7 @@
   template:
     src: tls.cf.j2
     dest: /etc/postfix/conf.d/20-tls.cf
-    mode: 0644
+    mode: '0644'
     owner: root
     group: root
   when: postfix_enable_tls
@@ -49,7 +49,7 @@
       template:
         src: remove_headers.cf.j2
         dest: /etc/postfix/conf.d/30-remove_headers.cf
-        mode: 0644
+        mode: '0644'
         owner: root
         group: root
 
@@ -57,7 +57,7 @@
       template:
         src: smtp_header_checks.j2
         dest: /etc/postfix/smtp_header_checks
-        mode: 0644
+        mode: '0644'
         owner: root
         group: root
 

@@ -18,7 +18,7 @@
       {% endif %}
     owner: root
     group: root
-    mode: 0400
+    mode: '0400'
   notify: Reload wireguard
 
 - name: Allow forward on interface
@@ -27,7 +27,7 @@
     dest: "/etc/nftables/forward/10-{{ wireguard_interface_name }}.nft"
     owner: root
     group: root
-    mode: 0400
+    mode: '0400'
   when:
     - wireguard_firewall_forward is true
     - global_disable_firewall is not defined

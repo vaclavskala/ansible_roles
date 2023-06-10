@@ -27,7 +27,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: '0755'
 
 - name: Copy forward.conf
   template:
@@ -38,7 +38,6 @@
     mode: '0644'
   when:
     - syslog_role == "forward"
-    - global_disable_firewall is not defined
   notify: Reload syslog-ng
 
 - name: Loghost tasks
@@ -50,7 +49,7 @@
         state: directory
         owner: root
         group: "{{ syslog_group }}"
-        mode: 0750
+        mode: '0750'
 
     - name: Copy log_host.conf
       template:
@@ -68,6 +67,8 @@
         owner: root
         group: root
         mode: '0600'
+      when:
+        - global_disable_firewall is not defined
       notify: Restart nftables
 
     - name: Copy syslog remote logrotate config

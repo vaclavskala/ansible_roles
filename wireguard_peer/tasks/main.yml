@@ -19,5 +19,5 @@
       {% endif %}
     owner: root
     group: root
-    mode: 0400
+    mode: '0400'
   notify: Reload wireguard

@@ -10,7 +10,7 @@
     dest: /etc/default/hd-idle
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: Restart hd-idle
 
 - name: Start hd-idle

@@ -17,7 +17,7 @@
       root:{{ lxd_subid_start }}:{{ lxd_subid_count }}
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Allocate gid for lxd
   ansible.builtin.blockinfile:
@@ -28,7 +28,7 @@
       root:{{ lxd_subid_start }}:{{ lxd_subid_count }}
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Allow IP forwarding
   sysctl:
@@ -76,7 +76,7 @@
     dest: "/var/lib/lxd/config.seed"
     owner: root
     group: root
-    mode: 0400
+    mode: '0400'
   when: lxd_config_default.rc == 0
 
 - name: Init lxd
