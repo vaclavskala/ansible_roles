@@ -1,0 +1,11 @@
+LISTENER={{ transfer_bind_ip }}:{{ transfer_bind_port }}
+PROVIDER=local
+PURGE_DAYS={{ transfer_retention }}
+{% if transfer_retention > 0 %}
+PURGE_INTERVAL=24
+{% endif %}
+BASEDIR={{ transfer_data_path }}
+{% if transfer_enable_auth %}
+HTTP_AUTH_USER={{ transfer_auth_user }}
+HTTP_AUTH_PASS={{ transfer_auth_pass }}
+{% endif %}

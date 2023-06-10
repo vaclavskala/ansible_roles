@@ -1,0 +1,34 @@
+[Service]
+NoNewPrivileges=true
+LockPersonality=true
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+MemoryDenyWriteExecute=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths={{ transfer_path }}/data
+NoExecPaths=/
+ExecPaths={{ transfer_path }}/bin /usr/lib
+ProtectProc=invisible
+ProcSubset=pid
+UMask=077
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+ProtectKernelTunables=true
+ProtectKernelLogs=true
+RestrictRealtime=true
+ProtectControlGroups=true
+ProtectHome=true
+RestrictNamespaces=true
+ProtectKernelModules=true
+SystemCallArchitectures=native
+RestrictAddressFamilies=AF_INET AF_INET6
+SystemCallFilter=@system-service
+PrivateDevices=true
+CapabilityBoundingSet=
+RemoveIPC=true
+{% if transfer_bind_ip == '127.0.0.1' %}
+IPAddressAllow=localhost
+IPAddressDeny=any
+{% endif %}

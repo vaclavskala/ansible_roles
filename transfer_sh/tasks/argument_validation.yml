@@ -1,0 +1,17 @@
+- name: Assert transfer_bind_ip is IP address
+  assert:
+    that:
+      - "transfer_bind_ip | ansible.netcommon.ipaddr"
+
+- name: Assert transfer_bind_port is in range of unix ports
+  assert:
+    that:
+      - "transfer_bind_port > 0"
+      - "transfer_bind_port < 65535"
+
+- name: If basic auth is used check if user and pass defined
+  assert:
+    that:
+      - "transfer_auth_user is defined"
+      - "transfer_auth_pass is defined"
+  when: "transfer_enable_auth"

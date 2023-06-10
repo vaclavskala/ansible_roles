@@ -1,0 +1,6 @@
+- name: Generate transfer binary
+  ansible.builtin.command: /usr/bin/go build -o ../bin/transfersh main.go
+  become: true
+  become_user: "{{ transfer_user }}"
+  args:
+    chdir: "{{ transfer_path }}/git"

@@ -1,0 +1,52 @@
+argument_specs:
+  main:
+    short_description: Parameters for transfer_sh role
+    options:
+      transfer_user:
+        type: "str"
+        required: false
+        default: 'transfer_sh'
+        description: "Which user use to run transfer"
+      transfer_path:
+        type: "str"
+        required: false
+        default: "/opt/transfer_sh"
+        description: "Root of transfer directory"
+      transfer_retention:
+        type: "int"
+        required: false
+        default: "7"
+        description: "Data retention in days"
+      transfer_data_path:
+        type: "str"
+        required: false
+        default: "/opt/transfer_sh/data"
+        description: "Directory where to save uploads"
+      transfer_enable_auth:
+        type: "bool"
+        required: false
+        default: true
+        description: "If copy hardening rules"
+      transfer_dataset:
+        type: "str"
+        required: false
+        default: "pool1/nobackup/transfer"
+        description: "Name of dataset used to hold uploads"
+      transfer_bind_ip:
+        type: "str"
+        required: false
+        default: "127.0.0.1"
+        description: "On which IP will transfer listen"
+      transfer_bind_port:
+        type: "int"
+        required: false
+        default: "8080"
+        description: "On which port will transfer listen"
+      transfer_auth_user:
+        type: "str"
+        required: false
+        description: "Basic auth user for uploads"
+      transfer_auth_pass:
+        type: "str"
+        required: false
+        description: "Basic auth user pass for uploads"

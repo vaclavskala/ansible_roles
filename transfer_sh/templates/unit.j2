@@ -1,0 +1,14 @@
+[Unit]
+Description=Transfer.sh unit
+After=nginx.service
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+EnvironmentFile={{ transfer_path }}/config
+User={{ transfer_user }}
+ExecStart={{ transfer_path }}/bin/transfersh
+
+[Install]
+WantedBy=multi-user.target

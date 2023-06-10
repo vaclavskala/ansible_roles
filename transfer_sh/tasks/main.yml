@@ -1,0 +1,98 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: "Create group {{ transfer_user }}"
+  ansible.builtin.group:
+    name: "{{ transfer_user }}"
+    state: present
+
+- name: "Create user {{ transfer_user }}"
+  ansible.builtin.user:
+    name: "{{ transfer_user }}"
+    state: present
+
+- name: Create transfer dirs
+  file:
+    path: '{{ item }}'
+    state: directory
+    owner: "{{ transfer_user }}"
+    group: "{{ transfer_user }}"
+    mode: '0755'
+  with_items:
+    - '{{ transfer_path }}'
+    - '{{ transfer_path }}/git'
+    - '{{ transfer_path }}/bin'
+
+- name: "Create {{ transfer_path }}/data' directory with restricted access"
+  file:
+    path: '{{ transfer_path }}/data'
+    state: directory
+    owner: "{{ transfer_user }}"
+    group: "{{ transfer_user }}"
+    mode: '0700'
+
+- name: Create transfer data dataset
+  zfs:
+    name: "{{ transfer_dataset }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ transfer_path }}/data"
+      recordsize: "1M"
+      sync: "disabled"
+      compression: 'lz4'
+  when:
+    - global_has_zfs
+    - global_manage_zfs
+
+- name: Checkout transfer git repo
+  ansible.builtin.git:
+    repo: 'https://github.com/dutchcoders/transfer.sh.git'
+    dest: '{{ transfer_path }}/git'
+    version: main
+  become_user: "{{ transfer_user }}"
+  notify: Generate transfer binary
+
+- name: Create transfer_sh config
+  template:
+    src: "config.j2"
+    dest: "{{ transfer_path }}/config"
+    owner: "root"
+    group: "root"
+    mode: '0644'
+  notify: Systemd daemon-reload
+
+- name: Create transfer_sh systemd unit
+  template:
+    src: "unit.j2"
+    dest: "/etc/systemd/system/transfer.service"
+    owner: "root"
+    group: "root"
+    mode: '0644'
+  notify: Systemd daemon-reload
+
+- name: Transfer hardening block
+  when: transfer_hardening_enable
+  block:
+    - name: Create /etc/systemd/system/transfer.service.d directory
+      file:
+        path: '/etc/systemd/system/transfer.service.d/'
+        state: directory
+        owner: "{{ transfer_user }}"
+        group: "{{ transfer_user }}"
+        mode: '0755'
+
+    - name: Create transfer_sh hardening config
+      template:
+        src: "hardening.j2"
+        dest: "/etc/systemd/system/transfer.service.d/override.conf"
+        owner: "root"
+        group: "root"
+        mode: '0644'
+      notify: Systemd daemon-reload
+
+- name: Start transfer
+  systemd:
+    name: transfer
+    state: started
+    enabled: true

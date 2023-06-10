@@ -1,0 +1,9 @@
+transfer_user: "transfer_sh"
+transfer_path: "/opt/transfer_sh"
+transfer_retention: 7
+transfer_data_path: "/opt/transfer_sh/data"
+transfer_enable_auth: true
+transfer_dataset: "pool1/nobackup/transfer"
+transfer_bind_ip: '127.0.0.1'
+transfer_bind_port: 8080
+transfer_hardening_enable: true
