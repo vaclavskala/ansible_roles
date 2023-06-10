@@ -6,3 +6,8 @@ argument_specs:
         type: "str"
         required: false
         default: "/usr/bin/dehydrated"
+        description: "Path to dehydrated binary"
+      dehydrated_user:
+        type: "str"
+        required: true
+        description: "Which user use to run dehydrated"
