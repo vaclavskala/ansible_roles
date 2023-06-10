@@ -1,0 +1,17 @@
+# Default nginx vhost to handle ACME and force redirect to https
+server {
+    listen 80 default_server;
+
+    server_name _;
+
+    location / {
+        access_log off;
+        return 301 https://$host$uri;
+    }
+
+    location ^~ /.well-known/acme-challenge/ {
+        limit_except GET { deny  all; }
+        default_type "text/plain";
+        root /var/www/letsencrypt;
+    }
+}

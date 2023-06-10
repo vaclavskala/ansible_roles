@@ -1,0 +1,118 @@
+- name: Install nginx Archlinux
+  pacman:
+    name: nginx-mainline
+    state: present
+  when: ansible_facts.os_family == 'Archlinux'
+
+- name: Install nginx Debian/Ubuntu
+  apt:
+    name: nginx
+    state: present
+  when: ansible_facts.os_family == 'Debian'
+
+- name: Copy nginx.conf
+  template:
+    src: "nginx.conf.j2"
+    dest: "/etc/nginx/nginx.conf"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+    mode: '0644'
+  notify: Reload nginx
+
+- name: Create /etc/nginx/sites-avaliable/ directory
+  file:
+    path: '/etc/nginx/sites-avaliable/'
+    state: directory
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+    mode: '0755'
+
+- name: Create /etc/nginx/sites-enabled/ directory
+  file:
+    path: '/etc/nginx/sites-enabled/'
+    state: directory
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+    mode: '0755'
+
+- name: Copy default http conf
+  template:
+    src: "http_vhost.conf.j2"
+    dest: "/etc/nginx/sites-avaliable/http_vhost.conf.j2"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+    mode: '0644'
+
+- name: Enable http conf
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-avaliable/http_vhost.conf.j2"
+    dest: "/etc/nginx/sites-enabled/http_vhost.conf.j2"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+    state: link
+  notify: Reload nginx
+
+- name: Create /var/www directory
+  file:
+    path: '/var/www'
+    state: directory
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+    mode: '0755'
+
+- name: Create /var/www/letsencrypt directory
+  file:
+    path: '/var/www/letsencrypt'
+    state: directory
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+    mode: '0755'
+
+- name: "Create {{ nginx_log_path }} directory"
+  file:
+    path: '{{ nginx_log_path }}'
+    state: directory
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+    mode: '0755'
+
+- name: "Allow incoming web traffic"
+  template:
+    src: "nftables.j2"
+    dest: "/etc/nftables/input/10-nginx.nft"
+    owner: root
+    group: root
+    mode: '0600'
+  when: global_disable_firewall is not defined
+  notify: Restart nftables
+
+- name: "Hardening block"
+  when: nginx_hardening
+  block:
+    - name: Create /etc/systemd/system/nginx.service.d directory
+      file:
+        path: '/etc/systemd/system/nginx.service.d'
+        state: directory
+        owner: "root"
+        group: "root"
+        mode: '0755'
+
+    - name: Copy nginx hardening rules
+      template:
+        src: "hardening.j2"
+        dest: "/etc/systemd/system/nginx.service.d/override.conf"
+        owner: "{{ nginx_user }}"
+        group: "{{ nginx_user }}"
+        mode: '0644'
+      notify:
+        - Systemd daemon-reload
+        - Restart nginx
+
+- name: Start nginx
+  systemd:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Flush nginx handler before certificate generation
+  meta: flush_handlers

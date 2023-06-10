@@ -1,0 +1,23 @@
+argument_specs:
+  main:
+    short_description: Parameters for nginx role
+    options:
+      nginx_worker_processes:
+        type: "str"
+        required: false
+        default: "1"
+        description: "How many nginx workers use"
+      nginx_log_path:
+        type: "str"
+        required: false
+        default: "/var/log/nginx"
+        description: "Directory used for logging"
+      nginx_user:
+        type: "str"
+        required: true
+        description: "Nginx user"
+      nginx_hardening:
+        type: "bool"
+        required: true
+        defualt: true
+        description: "If copy nginx systemd hardening config"
