@@ -7,3 +7,5 @@ dependencies:
     when: ansible_facts.os_family == 'Debian'
   - role: pacman
     when: ansible_facts.os_family == 'Archlinux'
+  - role: ubuntu
+    when: ansible_facts.distribution == 'Ubuntu'
