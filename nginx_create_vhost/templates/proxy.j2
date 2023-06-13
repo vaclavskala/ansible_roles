@@ -39,9 +39,8 @@ server {
         proxy_pass_header Set-Cookie;
         proxy_read_timeout 30m;
         proxy_connect_timeout 30m;
-{% if nginx_create_vhost_body_size != '1m' %}
-        client_max_body_size {{ nginx_create_vhost_body_size }};
-{% endif %}
+{% if nginx_create_vhost_custom_config is defined %}
+        {{ nginx_create_vhost_custom_config }}{% endif %}
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
     }
     access_log {{ nginx_log_path }}/{{ nginx_create_vhost_domain[0] }}-access.log main buffer=4k flush=60;

@@ -60,8 +60,8 @@ argument_specs:
         choices:
           - 'proxy'
         description: "Vhost type"
-      nginx_create_vhost_body_size:
+      nginx_create_vhost_custom_config:
         type: "str"
         required: false
-        default: "1m"
-        description: "Nginx client_max_body_size parameter"
+        default: "UNDEFINED"
+        description: "Custom config inserted to vhost"
