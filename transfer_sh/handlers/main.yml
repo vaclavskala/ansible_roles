@@ -4,3 +4,9 @@
   become_user: "{{ transfer_user }}"
   args:
     chdir: "{{ transfer_path }}/git"
+
+- name: Restart transfer
+  systemd:
+    name: transfer
+    state: restarted
+    enabled: true

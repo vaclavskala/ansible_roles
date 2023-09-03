@@ -51,7 +51,9 @@
     dest: '{{ transfer_path }}/git'
     version: main
   become_user: "{{ transfer_user }}"
-  notify: Generate transfer binary
+  notify:
+    - Generate transfer binary
+    - Restart transfer
 
 - name: Create transfer_sh config
   template:
