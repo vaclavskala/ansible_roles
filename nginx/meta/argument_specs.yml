@@ -19,5 +19,5 @@ argument_specs:
       nginx_hardening:
         type: "bool"
         required: true
-        defualt: true
+        default: true
         description: "If copy nginx systemd hardening config"
