@@ -46,3 +46,11 @@
     owner: "{{ nginx_user }}"
     group: "{{ nginx_user }}"
     mode: "755"
+
+- name: Create cron to regenerate certificates
+  ansible.builtin.cron:
+    name: "Dehydrated cron"
+    special_time: daily
+    cron_file: '/etc/cron.d/dehydrated'
+    user: "{{ dehydrated_user }}"
+    job: "{{ dehydrated_binary }} -c -g {% if dehydrated_reload_services | length > 0 %} && systemctl reload {{ dehydrated_reload_services | join(' ') }} {% endif %}"

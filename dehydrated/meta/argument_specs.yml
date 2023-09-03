@@ -11,3 +11,8 @@ argument_specs:
         type: "str"
         required: true
         description: "Which user use to run dehydrated"
+      dehydrated_reload_services:
+        type: "list"
+        elements: "str"
+        required: false
+        description: "Services to reload after certificate regeneration"
