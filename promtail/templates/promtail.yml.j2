@@ -1,0 +1,59 @@
+server:
+  http_listen_port: {{ promtail_listen_port }}
+  grpc_listen_port: 0
+
+positions:
+  filename: "{{ promtail_dir }}/positions.yml"
+
+clients:
+  - url: "http://{{ promtail_loki_address }}/loki/api/v1/push"
+
+scrape_configs:
+{% for dict_item in promtail_config %}
+- job_name: {{ dict_item['name'] }}
+  static_configs:
+  - labels:
+{% if dict_item['labels'] is defined %}
+{% for label, label_value in dict_item['labels'].items() %}
+      {{ label }}: "{{label_value}}"
+{% endfor %}
+{% endif %}
+      __path__: "{{ dict_item['path'] }}"
+  pipeline_stages:
+{% if dict_item['replaces'] is defined %}
+{% for replace_item in dict_item['replaces'] %}
+{% if replace_item.comment is defined %}
+  # {{ replace_item.comment }}
+{% endif %}
+  - replace:
+      expression: "{{ replace_item.source }}"
+      replace: "{{ replace_item.replace }}"
+{% endfor %}
+{% endif %}
+  - regex:
+      expression: "{{ value['regex'] | default('^(?P<timestamp>[a-zA-Z]{3}[[:space:]]+[0-9]+[[:space:]]+[^[:space:]]+) (?P<host>[a-zA-Z0-9-]+) (?P<app>[a-zA-Z0-9-_\\\\.]+).*$') }}"
+  - labels:
+{% if dict_item['custom_labels'] is defined %}
+{% for custom_label in dict_item['custom_labels'] %}
+      {{ custom_label }}:
+{% endfor %}
+{% else %}
+      host:
+      app:
+{% endif %}
+{% if dict_item['drops'] is defined %}
+{% for drop in dict_item['drops'] %}
+  - drop:
+      expression: "{{ drop }}"
+{% endfor %}
+{% endif %}
+  - timestamp:
+      source: {{ dict_item['timestamp']['source_label'] | default('timestamp') }}
+      format: "{{ dict_item['timestamp']['go_format'] | default('Jan 2 15:04:05') }}"
+      location: "{{ dict_item['timestamp']['timezone'] | default('Europe/Prague') }}"
+  - replace:
+      expression: "{{ dict_item['timestamp']['regex'] | default('^([a-zA-Z]{3}[[:space:]]+[0-9]+[[:space:]]+[^[:space:]]+[[:space:]])') }}"
+      replace: ""
+
+
+{% endfor %}

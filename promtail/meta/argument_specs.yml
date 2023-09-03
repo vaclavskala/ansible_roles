@@ -1,0 +1,73 @@
+argument_specs:
+  main:
+    short_description: Parameters for promtail role
+    options:
+      promtail_groups:
+        type: "list"
+        elements: "str"
+        required: false
+        default: "empty"
+        description: "Add promtail to these groups"
+      promtail_listen_port:
+        type: "int"
+        required: false
+        default: 0
+        description: "Port for promtail http listener"
+      promtail_loki_address:
+        type: "str"
+        required: true
+        description: "Loki address and port"
+      promtail_dir:
+        type: "str"
+        required: false
+        default: "/var/lib/promtail"
+        description: "Prometheus working directory"
+      promtail_config:
+        type: "list"
+        elements: "dict"
+        required: true
+        description: "Source file config dict"
+        options:
+          name:
+            type: "str"
+            required: true
+            description: "Name for section"
+          path:
+            type: "str"
+            required: true
+            description: "Path to log"
+          labels:
+            type: "dict"
+#            elements: "str"
+            required: false
+            default: "Not defined"
+            description: "Static labels to add"
+          replaces:
+            type: "list"
+            elements: "dict"
+            required: false
+            description: "Replace regex pairs"
+            options:
+              name:
+                type: "str"
+                required: true
+                description: "Path to log"
+              comment:
+                type: "str"
+                required: false
+                default: "Not defined"
+                description: "Comment to replace definition"
+              source:
+                type: "str"
+                required: true
+                description: "Regex which replace"
+              replace:
+                type: "str"
+                required: true
+                description: "String to use instead of source"
+          drops:
+            type: "list"
+            elements: "str"
+            required: false
+            default: "Not defined"
+            description: "Regex list to drop in processing"

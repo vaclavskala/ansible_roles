@@ -1,0 +1,2 @@
+promtail_listen_port: 0
+promtail_dir: /var/lib/promtail

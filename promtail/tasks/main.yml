@@ -1,0 +1,27 @@
+- name: Install promtail
+  package:
+    name:
+      - promtail
+    state: present
+
+- name: Copy promtail config
+  template:
+    src: "promtail.yml.j2"
+    dest: "/etc/loki/promtail.yaml"
+    owner: promtail
+    group: promtail
+    mode: '0600'
+  notify: Restart promtail
+
+- name: Add promtail to additional groups
+  user:
+    name: promtail
+    groups: "{{ item }}"
+    append: true
+  with_items: "{{ promtail_groups }}"
+
+- name: Start promtail
+  systemd:
+    name: promtail
+    state: started
+    enabled: true
