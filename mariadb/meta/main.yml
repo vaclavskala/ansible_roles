@@ -1,3 +1,4 @@
 dependencies:
   - role: cron
     when: mariadb_cron
+  - role: systemd_daemon_reload
