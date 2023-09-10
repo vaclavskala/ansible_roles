@@ -1,4 +1,3 @@
-iifname "{{ lxd_bridge_name }}" udp dport 53 accept comment "Allow udp DNS from container"
-iifname "{{ lxd_bridge_name }}" tcp dport 53 accept comment "Allow tcp DNS from container"
+iifname "{{ lxd_bridge_name }}" {tcp, udp} dport 53 accept comment "Allow DNS from container"
 iifname "{{ lxd_bridge_name }}" udp dport 67 accept comment "Allow DHCP from container"
 
