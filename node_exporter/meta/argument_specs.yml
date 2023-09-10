@@ -1,0 +1,23 @@
+argument_specs:
+  main:
+    short_description: Parameters for node_exporter role
+    options:
+      default_config_path:
+        type: "str"
+        required: true
+        description: |
+          "Path to global config directory"
+          "Ubuntu: /etc/default"
+          "Archlinux /etc/conf.d"
+      node_exporter_access_ip:
+        type: "str"
+        required: true
+        description: "IP on which scrape metrics from prometheus host"
+      node_exporter_prometheus_host:
+        type: "str"
+        required: true
+        description: "Host on which prometheus run"
+      node_exporter_prometheus_ip:
+        type: "str"
+        required: true
+        description: "Prometheus host IP to allow in firewall"

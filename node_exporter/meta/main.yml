@@ -1,0 +1,3 @@
+dependencies:
+  - role: firewall
+    when: global_disable_firewall is not defined

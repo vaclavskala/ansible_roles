@@ -1,0 +1,4 @@
+    # Node exporter for {{ inventory_hostname }}
+    - targets: ["{{ node_exporter_access_ip }}:9100"]
+      labels:
+        instance: '{{ inventory_hostname }}'

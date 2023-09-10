@@ -1,0 +1,72 @@
+- name: Install prometheus node exporter
+  package:
+    name:
+      - prometheus-node-exporter
+    state: present
+
+- name: "Allow incoming prometheus connection"
+  template:
+    src: "nftables.j2"
+    dest: "/etc/nftables/input/10-node_exporter.nft"
+    owner: root
+    group: root
+    mode: '0600'
+  when: global_disable_firewall is not defined
+  notify: Restart nftables
+
+- name: Enable additional collectors
+  copy:
+    src: config
+    dest: "{{ default_config_path }}/prometheus-node-exporter"
+    mode: '0644'
+    owner: root
+    group: root
+  notify: Reload node-exporter
+
+- name: Copy scrape job header
+  template:
+    src: "node_exporter_header.j2"
+    dest: "/etc/prometheus/conf.d/20-node_exporter"
+    owner: root
+    group: root
+    mode: '0600'
+  delegate_to: "{{ node_exporter_prometheus_host }}"
+
+- name: Copy scrape job config
+  template:
+    src: "job_template.j2"
+    dest: "/etc/prometheus/conf.d/21-node_exporter-{{ inventory_hostname }}"
+    owner: root
+    group: root
+    mode: '0600'
+  delegate_to: "{{ node_exporter_prometheus_host }}"
+
+- name: Assemble prometheus config
+  include_role:
+    name: prometheus
+    tasks_from: assemble.yml
+    apply:
+      delegate_to: "{{ node_exporter_prometheus_host }}"
+
+- name: Disable ubuntu node exporter services
+  when: ansible_facts.distribution == 'Ubuntu'
+  block:
+    - name: Stop node exporter apt timer
+      systemd:
+        name: prometheus-node-exporter-apt.timer
+        state: stopped
+        enabled: false
+        masked: true
+
+    - name: Stop node exporter smartmon timer
+      systemd:
+        name: prometheus-node-exporter-smartmon.timer
+        state: stopped
+        enabled: false
+        masked: true
+
+- name: Start prometheus node exporter
+  systemd:
+    name: prometheus-node-exporter.service
+    state: started
+    enabled: true
