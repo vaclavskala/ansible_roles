@@ -1,0 +1,59 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: Create prometheus dataset
+  zfs:
+    name: "{{ prometheus_dataset }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: '/var/lib/prometheus/'
+  when:
+    - global_has_zfs
+    - global_manage_zfs
+
+- name: Set prometheus directory owner
+  file:
+    path: /var/lib/prometheus/
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: '0700'
+
+- name: Install prometheus
+  package:
+    name:
+      - prometheus
+    state: present
+
+- name: Creates conf.d directory
+  file:
+    path: /etc/prometheus/conf.d/
+    state: directory
+    owner: root
+    group: prometheus
+    mode: '0770'
+
+- name: Copy prometheus config
+  template:
+    src: "prometheus.yml.j2"
+    dest: "/etc/prometheus/conf.d/00_prometheus.yml"
+    owner: root
+    group: root
+    mode: '0600'
+  notify: Reload prometheus
+
+- name: Set immutable config parameters
+  template:
+    src: prometheus_args
+    dest: "{{ default_config_path }}/prometheus"
+    mode: '0644'
+    owner: root
+    group: root
+  notify: Restart prometheus
+
+- name: Start prometheus
+  systemd:
+    name: prometheus
+    state: started
+    enabled: true

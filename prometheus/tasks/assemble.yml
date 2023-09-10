@@ -1,0 +1,8 @@
+- name: Assemble main.cf from fragments
+  ansible.builtin.assemble:
+    src: /etc/prometheus/conf.d
+    dest: /etc/prometheus/prometheus.yml
+    owner: root
+    group: prometheus
+    mode: '0640'
+  notify: Reload prometheus

@@ -1,0 +1,1 @@
+PROMETHEUS_ARGS="--storage.tsdb.retention.time={{ prometheus_retention }} --web.listen-address={{ prometheus_listen_address }}:{{ prometheus_listen_port }}"

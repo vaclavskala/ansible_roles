@@ -1,0 +1,29 @@
+argument_specs:
+  main:
+    short_description: Parameters for prometheus role
+    options:
+      prometheus_retention:
+        type: "str"
+        required: false
+        default: '30d'
+        description: "How long keep prometheus data"
+      prometheus_listen_address:
+        type: "str"
+        required: false
+        default: '127.0.0.1'
+        description: "On which IP listen"
+      prometheus_listen_port:
+        type: "int"
+        required: false
+        default: "9090"
+        description: "On which port listen"
+      prometheus_dataset:
+        type: "str"
+        required: false
+        default: 'pool1/nobackup/prometheus'
+        description: "Name of zfs dataset for prometheus"
+      prometheus_scrape_interval:
+        type: "str"
+        required: false
+        default: '15s'
+        description: "How often scrape data"
