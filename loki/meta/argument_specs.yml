@@ -1,0 +1,47 @@
+argument_specs:
+  main:
+    short_description: Parameters for loki role
+    options:
+      loki_retention:
+        type: "str"
+        required: false
+        default: '30d'
+        description: "How long keep data in loki"
+      loki_path:
+        type: "str"
+        required: false
+        default: '/var/lib/loki'
+        description: "Path to loki storage"
+      loki_dataset:
+        type: "str"
+        required: false
+        default: "pool1/nobackup/loki"
+        description: "Name for loki dataset"
+      loki_reporting_enabled:
+        type: "bool"
+        required: false
+        default: false
+        description: "If report usage metrics to grafana devs"
+      loki_ruler_path:
+        type: "str"
+        required: false
+        default: '/etc/loki/rules'
+        description: "Where to find alert manager rules"
+      loki_alertmanager_port:
+        type: "int"
+        required: false
+        default: '9093'
+        description: "Alert manager port"
+      loki_alertmanager_host:
+        type: "str"
+        required: false
+        default: '127.0.0.1'
+        description: "Alert manager host"
+      loki_alertmanager_protocol:
+        type: "str"
+        required: false
+        choices:
+          - 'http'
+          - 'https'
+        default: 'http'
+        description: "Alert manager protocol"

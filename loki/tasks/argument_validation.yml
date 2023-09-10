@@ -1,0 +1,11 @@
+- name: Assert alertmanager port number is in range of unix ports
+  assert:
+    that:
+      - loki_alertmanager_port is defined
+      - loki_alertmanager_port > 0
+      - loki_alertmanager_port < 65535
+
+- name: Assert alertmanager host is IP address
+  assert:
+    that:
+      - "loki_alertmanager_host | ansible.netcommon.ipaddr"

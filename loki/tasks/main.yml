@@ -1,0 +1,51 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: Create loki dataset
+  zfs:
+    name: "{{ loki_dataset }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ loki_path }}"
+      compression: 'lz4'
+  when:
+    - global_has_zfs
+    - global_manage_zfs
+
+- name: Set loki directory owner
+  file:
+    path: "{{ loki_path }}"
+    state: directory
+    owner: loki
+    group: loki
+    mode: '0700'
+
+- name: Set loki ruler directory owner
+  file:
+    path: "{{ loki_ruler_path }}"
+    state: directory
+    owner: loki
+    group: loki
+    mode: '0700'
+
+- name: Install loki
+  package:
+    name:
+      - loki
+    state: present
+
+- name: Copy loki config
+  template:
+    src: "loki.yaml.j2"
+    dest: "/etc/loki/loki.yaml"
+    owner: loki
+    group: root
+    mode: '0600'
+  notify: Restart loki
+
+- name: Start loki
+  systemd:
+    name: loki
+    state: started
+    enabled: true

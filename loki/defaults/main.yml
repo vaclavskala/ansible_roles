@@ -1,0 +1,8 @@
+loki_retention: "30d"
+loki_path: "/var/lib/loki"
+loki_dataset: 'pool1/nobackup/loki'
+loki_reporting_enabled: false
+loki_ruler_path: "/etc/loki/rules"
+loki_alertmanager_port: 9093
+loki_alertmanager_host: "127.0.0.1"
+loki_alertmanager_protocol: "http"
