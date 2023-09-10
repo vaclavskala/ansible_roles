@@ -54,7 +54,7 @@ argument_specs:
       lxd_control_pass:
         type: "str"
         required: false
-        description: "Control IP"
+        description: "Control pass"
       lxd_bridge_ip:
         type: "str"
         required: true

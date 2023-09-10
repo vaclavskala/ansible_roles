@@ -1,6 +1,6 @@
 argument_specs:
   main:
-    short_description: Parameters for wireguard role
+    short_description: Parameters for wireguard_client role
     options:
       wireguard_address:
         type: "str"

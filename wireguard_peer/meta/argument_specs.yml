@@ -1,6 +1,6 @@
 argument_specs:
   main:
-    short_description: Parameters for wireguard role
+    short_description: Parameters for wireguard_peer role
     options:
       wireguard_interface_name:
         type: "str"

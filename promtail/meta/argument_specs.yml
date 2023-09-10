@@ -51,7 +51,7 @@ argument_specs:
               name:
                 type: "str"
                 required: true
-                description: "Path to log"
+                description: "Name for replace blog"
               comment:
                 type: "str"
                 required: false
