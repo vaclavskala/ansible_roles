@@ -1,0 +1,9 @@
+- name: Assert node_exporter_access_ip is IP address
+  assert:
+    that:
+      - "node_exporter_access_ip | ansible.netcommon.ipaddr"
+
+- name: Assert node_exporter_prometheus_ip is IP address
+  assert:
+    that:
+      - "node_exporter_prometheus_ip | ansible.netcommon.ipaddr"

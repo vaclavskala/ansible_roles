@@ -1,3 +1,7 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
 - name: Install prometheus node exporter
   package:
     name:
