@@ -1,0 +1,20 @@
+global:
+  logging:
+    # use syslog instead of stdout because it makes journald happy
+    - type: syslog
+      format: human
+      level: warn
+
+jobs:
+  - type: sink
+    recv:
+      placeholder:
+        encryption: off
+    name: "{{ zrepl_source_server }}"
+    root_fs: "{{ zrepl_backup_rootfs }}/{{ zrepl_source_server }}"
+    serve:
+      type: tcp
+      listen: "{{ zrepl_backup_ip }}:{{ zrepl_port }}"
+      clients: {
+        "{{ zrepl_source_ip }}" :               "{{ zrepl_source_server }}",
+      }

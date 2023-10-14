@@ -1,0 +1,101 @@
+argument_specs:
+  main:
+    short_description: Parameters for zrepl_source role
+    options:
+#--- COMMON ARGUMENTS ---#
+      zrepl_backup_ip:
+        type: "str"
+        required: true
+        description: "IP of backup server"
+      zrepl_port:
+        type: "str"
+        required: true
+        description: "Port on which zrepl listens"
+#--- SOURCE ARGUMENTS ---#
+      zrepl_repo_key_url:
+        type: "str"
+        required: false
+        default: 'https://zrepl.cschwarz.com/apt/apt-key.asc'
+        description: "From which url download zrepl apt key"
+      zrepl_repo_key_dest:
+        type: "str"
+        required: false
+        default: '/usr/share/keyrings/zrepl.asc'
+        description: "Where to save zrepl apt key"
+      zrepl_backup_name:
+        type: "str"
+        required: true
+        description: "Name of backup server"
+      zrepl_datasets:
+        type: "list"
+        elements: "str"
+        required: true
+        description: "Names of datasets to backup"
+      zrepl_disabled_datasets:
+        type: "list"
+        elements: "str"
+        required: false
+        default: "empty"
+        description: "Names of datasets to ignore"
+      zrepl_encrypted:
+        type: "bool"
+        required: true
+        description: "If send encrypted dataset"
+      zrepl_bandwidth_limit_mb:
+        type: "int"
+        required: false
+        default: "Unlimited"
+        description: "Limit backup speed"
+      zrepl_source_retention:
+        type: "dict"
+        required: true
+        description: "Definition of source retention"
+        options:
+          keep_last_n:
+            type: "int"
+            required: true
+            description: "How many last snapshots keep"
+          keep_grid:
+            type: "str"
+            required: true
+            description: "Long term snapshot retention"
+      zrepl_backup_retention:
+        type: "dict"
+        required: true
+        description: "Definition of backup retention"
+        options:
+          keep_last_n:
+            type: "int"
+            required: true
+            description: "How many last snapshots keep"
+          keep_grid:
+            type: "str"
+            required: true
+            description: "Long term snapshot retention"
+      zrepl_snapshot_cron:
+        type: "str"
+        required: true
+        description: "Cron to control snapshot creation"
+#--- BACKUP ARGUMENTS ---#
+      zrepl_proxy_path:
+        type: "str"
+        required: false
+        default: '/usr/local/libexec/zrepl/proxy_path'
+        description: "Folder to use as proxy path for zfs binary"
+      zrepl_default_path:
+        type: "str"
+        required: false
+        default: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+        description: "Default $PATH for zrepl systemd unit"
+      zrepl_source_server:
+        type: "str"
+        required: true
+        description: "Name of source server"
+      zrepl_source_ip:
+        type: "str"
+        required: true
+        description: "IP of source server"
+      zrepl_backup_rootfs:
+        type: "str"
+        required: true
+        description: "Name of backup dataset"

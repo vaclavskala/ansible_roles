@@ -1,0 +1,6 @@
+dependencies:
+  - role: zrepl_common
+  - role: systemd_daemon_reload
+  - role: firewall
+    when: global_disable_firewall is not defined
+allow_duplicates: true

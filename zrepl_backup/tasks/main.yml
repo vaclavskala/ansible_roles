@@ -1,0 +1,92 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: Set "{{ zrepl_proxy_path }}" directory
+  file:
+    path: "{{ zrepl_proxy_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Get zfs binary path
+  command: "which zfs"
+  register: zfs_binary_path
+  changed_when: false
+
+- name: Create zfs proxy file
+  template:
+    src: "zfs_proxy.j2"
+    dest: "{{ zrepl_proxy_path }}/zfs"
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Create group "zrepl-{{ zrepl_source_server }}"
+  group:
+    name: "zrepl-{{ zrepl_source_server }}"
+    state: present
+
+- name: Create user "zrepl-{{ zrepl_source_server }}"
+  user:
+    name: "zrepl-{{ zrepl_source_server }}"
+    group: "zrepl-{{ zrepl_source_server }}"
+#    groups: "{{ create_user_groups | default(create_user_username) }}"
+    shell: "/bin/false"
+#    home: "{{ create_user_home }}"
+
+- name: Create zrepl config
+  template:
+    src: "systemd.j2"
+    dest: "/lib/systemd/system/zrepl-{{ zrepl_source_server }}.service"
+    owner: root
+    group: root
+    mode: '0600'
+  notify: Systemd daemon-reload
+
+- name: Create zrepl systemd unit
+  template:
+    src: "zrepl_backup.yaml.j2"
+    dest: "/etc/zrepl/zrepl-{{ zrepl_source_server }}.yml"
+    owner: "zrepl-{{ zrepl_source_server }}"
+    group: "zrepl-{{ zrepl_source_server }}"
+    mode: '0644'
+  notify: Restart zrepl on backup
+
+- name: Reload systemd
+  meta: flush_handlers
+
+- name: Create backup dataset for server
+  zfs:
+    name: "{{ zrepl_backup_rootfs }}/{{ zrepl_source_server }}"
+    state: present
+
+- name: Grant zfs permissions # noqa no-changed-when
+  shell: >
+    zfs allow zrepl-{{ zrepl_source_server }}
+    create,mount,send,receive,compression,destroy,snapshot,mountpoint,userprop,hold
+    {{ zrepl_backup_rootfs }}/{{ zrepl_source_server }}
+
+- name: "Allow backup in firewall"
+  template:
+    src: "nftables.j2"
+    dest: "/etc/nftables/input/10-backup-{{ zrepl_source_server }}.nft"
+    owner: root
+    group: root
+    mode: '0600'
+  when: global_disable_firewall is not defined
+  notify: Restart nftables
+
+- name: Start "zrepl-{{ zrepl_source_server }}.service"
+  systemd:
+    name: "zrepl-{{ zrepl_source_server }}.service"
+    state: started
+    enabled: true
+
+- name: Disable default zrepl instance
+  systemd:
+    name: zrepl
+    state: stopped
+    enabled: false
+    masked: true

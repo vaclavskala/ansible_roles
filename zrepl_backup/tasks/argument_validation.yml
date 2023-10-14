@@ -1,0 +1,4 @@
+- name: Assert zrepl_source_ip is IP address
+  assert:
+    that:
+      - "zrepl_source_ip | ansible.netcommon.ipaddr"

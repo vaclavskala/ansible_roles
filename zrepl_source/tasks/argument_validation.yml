@@ -1,0 +1,11 @@
+- name: Assert zrepl_backup_ip is IP address
+  assert:
+    that:
+      - "zrepl_backup_ip | ansible.netcommon.ipaddr"
+
+- name: Assert zrepl_port is in range of unix ports
+  assert:
+    that:
+      - zrepl_port is defined
+      - zrepl_port > 0
+      - zrepl_port < 65535

@@ -1,0 +1,51 @@
+global:
+  logging:
+    # use syslog instead of stdout because it makes journald happy
+    - type: syslog
+      format: human
+      level: warn
+
+jobs:
+  - type: push
+    name: "zrepl"
+    filesystems: {
+{% for dataset in zrepl_datasets %}
+      "{{ dataset }}": true,
+{% endfor %}
+{% for dataset in zrepl_disabled_datasets %}
+      "{{ dataset }}": false,
+{% endfor %}
+    }
+    connect:
+      type: tcp
+      address: "{{ zrepl_backup_ip }}:{{ zrepl_port }}"
+    snapshotting:
+      type: cron
+      prefix: zrepl_
+      cron: "{{ zrepl_snapshot_cron }}"
+      # Timestamp format that is used as snapshot suffix.
+      # Can be any of "dense" (default), "human", "iso-8601", "unix-seconds" or a custom Go time format (see https://go.dev/src/time/format.go)
+      timestamp_format: dense
+    send:
+      compressed: true
+      large_blocks: true
+      encrypted: {{ zrepl_encrypted }}
+      raw: {{ zrepl_encrypted }}
+{% if zrepl_bandwidth_limit_mb is defined %}
+      bandwidth_limit:
+        max: {{ zrepl_bandwidth_limit_mb }} MiB
+{% endif %}
+    pruning:
+      keep_sender:
+        - type: not_replicated
+        - type: last_n
+          count: {{ zrepl_source_retention.keep_last_n }}
+        - type: grid
+          grid: "{{ zrepl_source_retention.keep_grid }}"
+          regex: "^zrepl_.*"
+      keep_receiver:
+        - type: last_n
+          count: {{ zrepl_backup_retention.keep_last_n }}
+        - type: grid
+          grid: "{{ zrepl_backup_retention.keep_grid }}"
+          regex: "^zrepl_.*"

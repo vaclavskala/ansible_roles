@@ -1,0 +1,5 @@
+- name: Restart zrepl on backup
+  systemd:
+    name: "zrepl-{{ zrepl_source_server }}.service"
+    state: restarted
+    enabled: true

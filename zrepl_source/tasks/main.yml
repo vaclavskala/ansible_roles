@@ -1,0 +1,11 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: Include setup-source tasks
+  include_tasks: setup_source.yml
+
+- name: Delegate zrepl_backup role to backup
+  import_role:
+    name: zrepl_backup
+  delegate_to: "{{ zrepl_backup_name }}"

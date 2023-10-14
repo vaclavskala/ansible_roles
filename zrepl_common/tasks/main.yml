@@ -1,0 +1,15 @@
+- name: Include install zrepl-arch task
+  include_tasks: install_arch.yml
+  when: ansible_facts.distribution == 'Archlinux'
+
+- name: Include install zrepl-ubuntu task
+  include_tasks: install_ubuntu.yml
+  when: ansible_facts.distribution == 'Ubuntu'
+
+- name: Create /etc/zrepl/ directory
+  file:
+    path: '/etc/zrepl/'
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: '0755'

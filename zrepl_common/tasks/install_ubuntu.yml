@@ -1,0 +1,19 @@
+- name: Get zrepl repo key
+  ansible.builtin.get_url:
+    url: "{{ zrepl_repo_key_url }}"
+    dest: "{{ zrepl_repo_key_dest }}"
+    mode: '0644'
+
+- name: Create zrepl repo file
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by={{ zrepl_repo_key_dest }}] https://zrepl.cschwarz.com/apt/{{ ansible_facts.distribution | lower }} {{ ansible_distribution_release }} main"
+    state: present
+  notify: Update apt cache
+
+- name: Update apt cache
+  meta: flush_handlers
+
+- name: Install zrepl
+  apt:
+    name: zrepl
+    state: present

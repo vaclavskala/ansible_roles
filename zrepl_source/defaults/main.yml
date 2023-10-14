@@ -1,0 +1,2 @@
+zrepl_repo_key_url: 'https://zrepl.cschwarz.com/apt/apt-key.asc'
+zrepl_repo_key_dest: '/usr/share/keyrings/zrepl.asc'

@@ -1,0 +1,7 @@
+- name: Install zrepl using yay
+  aur:
+    use: yay
+    name:
+      - zrepl-bin
+  become: true
+  become_user: "{{ default_user }}"

@@ -1,0 +1,14 @@
+- name: Create zrepl config
+  template:
+    src: "zrepl_source.yaml.j2"
+    dest: "/etc/zrepl/zrepl.yml"
+    owner: root
+    group: root
+    mode: '0600'
+  notify: Restart zrepl
+
+- name: Start zrepl
+  systemd:
+    name: zrepl
+    state: started
+    enabled: true
