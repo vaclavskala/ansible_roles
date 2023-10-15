@@ -29,10 +29,12 @@
   changed_when: false
 
 - name: Set ssh key
-  lineinfile:
-    path: "{{ create_user_home + '/.ssh/authorized_keys' }}"
-    regexp: "{{ create_user_ssh_key }}"
-    line: "{{ create_user_ssh_key }}"
+  template:
+    src: "authorized_keys.j2"
+    dest: "{{ create_user_home + '/.ssh/authorized_keys' }}"
+    owner: "{{ create_user_username }}"
+    group: "{{ create_user_username }}"
+    mode: '600'
   when: create_user_ssh_key is defined
 
 - name: Set zsh config for "{{ create_user_username }}"

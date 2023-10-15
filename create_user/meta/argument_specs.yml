@@ -22,7 +22,8 @@ argument_specs:
         default: '<create_user_username>'
         description: "Groups in which user belongs"
       create_user_ssh_key:
-        type: "str"
+        type: "list"
         required: false
+        elements: "str"
         default: 'Not defined'
         description: "SSH key for new user"
