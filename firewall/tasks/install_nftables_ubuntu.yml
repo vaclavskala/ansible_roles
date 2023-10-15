@@ -1,5 +1,0 @@
-- name: "Install nftables {{ ansible_facts.distribution }}"
-  apt:
-    pkg:
-      - nftables
-    state: present
