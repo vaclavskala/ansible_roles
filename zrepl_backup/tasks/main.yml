@@ -65,7 +65,7 @@
 - name: Grant zfs permissions # noqa no-changed-when
   shell: >
     zfs allow zrepl-{{ zrepl_source_server }}
-    create,mount,send,receive,compression,destroy,snapshot,mountpoint,userprop,hold
+    create,mount,send,receive,compression,destroy,snapshot,mountpoint,userprop,hold,release
     {{ zrepl_backup_rootfs }}/{{ zrepl_source_server }}
 
 - name: "Allow backup in firewall"
