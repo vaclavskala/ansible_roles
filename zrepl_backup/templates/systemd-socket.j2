@@ -2,6 +2,8 @@
 Accept=false
 ListenStream={{ zrepl_backup_ip }}:{{ zrepl_port }}
 Service=zrepl-{{ zrepl_source_server }}-proxy.service
+IPAddressAllow={{ zrepl_source_ip }}
+IPAddressDeny=any
 
 [Install]
 WantedBy=sockets.target
