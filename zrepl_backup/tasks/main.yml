@@ -32,11 +32,9 @@
   user:
     name: "zrepl-{{ zrepl_source_server }}"
     group: "zrepl-{{ zrepl_source_server }}"
-#    groups: "{{ create_user_groups | default(create_user_username) }}"
     shell: "/bin/false"
-#    home: "{{ create_user_home }}"
 
-- name: Create zrepl config
+- name: Create zrepl systemd unit
   template:
     src: "systemd.j2"
     dest: "/lib/systemd/system/zrepl-{{ zrepl_source_server }}.service"
@@ -45,7 +43,7 @@
     mode: '0600'
   notify: Systemd daemon-reload
 
-- name: Create zrepl systemd unit
+- name: Create zrepl config
   template:
     src: "zrepl_backup.yaml.j2"
     dest: "/etc/zrepl/zrepl-{{ zrepl_source_server }}.yml"
@@ -53,6 +51,10 @@
     group: "zrepl-{{ zrepl_source_server }}"
     mode: '0644'
   notify: Restart zrepl on backup
+
+- name: Include extended validation
+  include_tasks: socket_activation.yml
+  when: zrepl_socket_activation
 
 - name: Reload systemd
   meta: flush_handlers
