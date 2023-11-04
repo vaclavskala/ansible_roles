@@ -12,7 +12,7 @@
 - name: Create zrepl proxy systemd unit
   template:
     src: "systemd-proxy.j2"
-    dest: "/lib/systemd/system/zrepl-{{ zrepl_source_server }}-proxy.socket"
+    dest: "/lib/systemd/system/zrepl-{{ zrepl_source_server }}-proxy.service"
     owner: root
     group: root
     mode: '0600'
