@@ -6,9 +6,10 @@ Documentation=https://zrepl.github.io
 User=zrepl-{{ zrepl_source_server }}
 Group=zrepl-{{ zrepl_source_server }}
 Type=simple
-Environment=PATH="{{ zrepl_proxy_path }}:{{ zrepl_default_path }}"
+Environment=PATH="{{ zrepl_proxy_path }}/proxy_path:{{ zrepl_default_path }}"
 ExecStartPre=/usr/bin/zrepl --config /etc/zrepl/zrepl-{{ zrepl_source_server }}.yml configcheck
 ExecStart=/usr/bin/zrepl --config /etc/zrepl/zrepl-{{ zrepl_source_server }}.yml daemon
+ExecStartPost={{ zrepl_proxy_path }}/zrepl_wait.sh {{ zrepl_port }}
 RuntimeDirectory=zrepl zrepl/stdinserver
 RuntimeDirectoryMode=0700
 

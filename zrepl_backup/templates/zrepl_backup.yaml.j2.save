@@ -15,12 +15,10 @@ jobs:
     serve:
       type: tcp
 {% if zrepl_socket_activation %}
-      listen: "127.0.0.1:{{ zrepl_port }}"
-      clients: {
-        "127.0.0.1" :               "{{ zrepl_source_server }}",
+      listen: "127.0.0.11:{{ zrepl_port }}"
 {% else %}
       listen: "{{ zrepl_backup_ip }}:{{ zrepl_port }}"
+{% endif %}
       clients: {
         "{{ zrepl_source_ip }}" :               "{{ zrepl_source_server }}",
-{% endif %}
       }

@@ -2,13 +2,16 @@
   include_tasks: argument_validation.yml
   when: extended_validation is defined
 
-- name: Set "{{ zrepl_proxy_path }}" directory
+- name: Create zrepl proxy path directory
   file:
-    path: "{{ zrepl_proxy_path }}"
+    path: "{{ item }}"
     state: directory
     owner: root
     group: root
     mode: '0755'
+  with_items:
+    - "{{ zrepl_proxy_path }}"
+    - "{{ zrepl_proxy_path }}/proxy_path"
 
 - name: Get zfs binary path
   command: "which zfs"
@@ -18,7 +21,7 @@
 - name: Create zfs proxy file
   template:
     src: "zfs_proxy.j2"
-    dest: "{{ zrepl_proxy_path }}/zfs"
+    dest: "{{ zrepl_proxy_path }}/proxy_path/zfs"
     owner: root
     group: root
     mode: '0755'
@@ -41,7 +44,9 @@
     owner: root
     group: root
     mode: '0600'
-  notify: Systemd daemon-reload
+  notify:
+    - Systemd daemon-reload
+    - Restart zrepl on backup
 
 - name: Create zrepl config
   template:
@@ -85,6 +90,26 @@
     name: "zrepl-{{ zrepl_source_server }}.service"
     state: started
     enabled: true
+  when: not zrepl_socket_activation
+
+- name: Zrepl socket activation block
+  when: zrepl_socket_activation
+  block:
+    - name: Disable "zrepl-{{ zrepl_source_server }}.service"
+      systemd:
+        name: "zrepl-{{ zrepl_source_server }}.service"
+        enabled: false
+
+    - name: Disable "zrepl-{{ zrepl_source_server }}-proxy.service"
+      systemd:
+        name: "zrepl-{{ zrepl_source_server }}-proxy.service"
+        enabled: true
+
+    - name: Enable "zrepl-{{ zrepl_source_server }}.socket"
+      systemd:
+        name: "zrepl-{{ zrepl_source_server }}.socket"
+        state: started
+        enabled: true
 
 - name: Disable default zrepl instance
   systemd:

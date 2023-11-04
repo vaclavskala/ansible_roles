@@ -1,2 +1,2 @@
-zrepl_proxy_path: /usr/local/libexec/zrepl/proxy_path
+zrepl_proxy_path: /usr/local/libexec/zrepl
 zrepl_default_path: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:"

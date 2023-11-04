@@ -15,7 +15,7 @@ argument_specs:
       zrepl_proxy_path:
         type: "str"
         required: false
-        default: '/usr/local/libexec/zrepl/proxy_path'
+        default: '/usr/local/libexec/zrepl'
         description: "Folder to use as proxy path for zfs binary"
       zrepl_default_path:
         type: "str"
@@ -34,3 +34,13 @@ argument_specs:
         type: "str"
         required: true
         description: "Name of backup dataset"
+      zrepl_socket_activation:
+        type: "bool"
+        required: false
+        default: false
+        description: "If use socket activation"
+      zrepl_socket_idle_time:
+        type: "int"
+        required: false
+        default: 60
+        description: "After how much idle time wait before disabling unit"

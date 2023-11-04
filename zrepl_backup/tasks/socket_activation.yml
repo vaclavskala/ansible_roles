@@ -1,0 +1,21 @@
+- name: Create zrepl socket systemd unit
+  template:
+    src: "systemd-socket.j2"
+    dest: "/lib/systemd/system/zrepl-{{ zrepl_source_server }}.socket"
+    owner: root
+    group: root
+    mode: '0600'
+  notify:
+    - Systemd daemon-reload
+    - Restart zrepl socket on backup
+
+- name: Create zrepl proxy systemd unit
+  template:
+    src: "systemd-proxy.j2"
+    dest: "/lib/systemd/system/zrepl-{{ zrepl_source_server }}-proxy.socket"
+    owner: root
+    group: root
+    mode: '0600'
+  notify:
+    - Systemd daemon-reload
+    - Restart zrepl proxy on backup

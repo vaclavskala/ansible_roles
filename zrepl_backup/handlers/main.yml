@@ -2,4 +2,13 @@
   systemd:
     name: "zrepl-{{ zrepl_source_server }}.service"
     state: restarted
-    enabled: true
+
+- name: Restart zrepl proxy on backup
+  systemd:
+    name: "zrepl-{{ zrepl_source_server }}-proxy.service"
+    state: restarted
+
+- name: Restart zrepl socket on backup
+  systemd:
+    name: "zrepl-{{ zrepl_source_server }}.socket"
+    state: restarted
