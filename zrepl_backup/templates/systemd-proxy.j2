@@ -3,8 +3,9 @@ Requires=zrepl-{{ zrepl_source_server }}.service
 After=zrepl-{{ zrepl_source_server }}.service
 Requires=zrepl-{{ zrepl_source_server }}.socket
 After=zrepl-{{ zrepl_source_server }}.socket
+JoinsNamespaceOf=zrepl-vps.service
 
 [Service]
 ExecStart=/usr/lib/systemd/systemd-socket-proxyd --exit-idle-time={{ zrepl_socket_idle_time }} 127.0.0.1:{{ zrepl_port }}
 PrivateTmp=yes
-#PrivateNetwork=yes
+PrivateNetwork=yes
