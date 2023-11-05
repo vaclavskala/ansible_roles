@@ -9,3 +9,40 @@ JoinsNamespaceOf=zrepl-vps.service
 ExecStart=/usr/lib/systemd/systemd-socket-proxyd --exit-idle-time={{ zrepl_socket_idle_time }} 127.0.0.1:{{ zrepl_port }}
 PrivateTmp=yes
 PrivateNetwork=yes
+
+{% if global_systemd_hardening %}
+# Hardening
+ProtectProc=invisible
+CapabilityBoundingSet=""
+NoNewPrivileges=true
+UMask=0077
+ProtectSystem=strict
+ProtectHome=true
+ReadOnlyPaths=/
+NoExecPaths=/
+ExecPaths=/usr/lib/systemd/systemd-socket-proxyd /lib
+PrivateTmp=true
+PrivateIPC=true
+PrivateUsers=true
+ProtectHostname=true
+ProtectClock=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictSUIDSGID=true
+RemoveIPC=true
+ProcSubset=pid
+DeviceAllow=/dev/zfs rw
+DevicePolicy=closed
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=yes
+SystemCallArchitectures=native
+PrivateDevices=true
+DynamicUser=true
+SystemCallFilter=~ @mount @cpu-emulation @keyring @module @obsolete @raw-io @debug @clock @resources @reboot @swap @privileged @resources
+DevicePolicy=closed
+{% endif %}

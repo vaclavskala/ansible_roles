@@ -7,6 +7,17 @@
     mode: '0600'
   notify: Restart zrepl
 
+- name: Create zrepl systemd unit
+  template:
+    src: "systemd.j2"
+    dest: "/lib/systemd/system/zrepl.service"
+    owner: root
+    group: root
+    mode: '0600'
+  notify:
+    - Systemd daemon-reload
+    - Restart zrepl
+
 - name: Start zrepl
   systemd:
     name: zrepl

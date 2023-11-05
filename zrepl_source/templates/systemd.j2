@@ -3,35 +3,31 @@ Description=zrepl daemon
 Documentation=https://zrepl.github.io
 
 [Service]
-User=zrepl-{{ zrepl_source_server }}
-Group=zrepl-{{ zrepl_source_server }}
 Type=simple
-Environment=PATH="{{ zrepl_proxy_path }}/proxy_path:{{ zrepl_default_path }}"
-ExecStartPre=/usr/bin/zrepl --config /etc/zrepl/zrepl-{{ zrepl_source_server }}.yml configcheck
-ExecStart=/usr/bin/zrepl --config /etc/zrepl/zrepl-{{ zrepl_source_server }}.yml daemon
-ExecStartPost={{ zrepl_proxy_path }}/zrepl_wait.sh {{ zrepl_port }}
+ExecStartPre=/usr/bin/zrepl --config /etc/zrepl/zrepl.yml configcheck
+ExecStart=/usr/bin/zrepl --config /etc/zrepl/zrepl.yml daemon
 RuntimeDirectory=zrepl zrepl/stdinserver
 RuntimeDirectoryMode=0700
 
 # Make Go produce coredumps
 Environment=GOTRACEBACK='crash'
 
-PrivateNetwork=yes
-
 {% if global_systemd_hardening %}
 # Hardening
+IPAddressDeny=any
+IPAddressAllow={{ zrepl_backup_ip }}
 ProtectProc=invisible
-CapabilityBoundingSet=""
+#CapabilityBoundingSet=""
 NoNewPrivileges=true
 UMask=0077
 ProtectSystem=strict
 ProtectHome=true
 ReadOnlyPaths=/
 NoExecPaths=/
-ExecPaths=/usr/local/libexec/zrepl /usr/bin/zrepl /usr/sbin/zfs /usr/sbin/zpool /bin/bash /usr/bin/sleep /usr/bin/nc /lib
+ExecPaths=/usr/bin/zrepl /usr/sbin/zfs /usr/sbin/zpool /lib
 PrivateTmp=true
 PrivateIPC=true
-PrivateUsers=true
+#PrivateUsers=true
 ProtectHostname=true
 ProtectClock=true
 ProtectKernelTunables=true
