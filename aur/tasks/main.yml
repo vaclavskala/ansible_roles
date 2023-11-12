@@ -1,0 +1,34 @@
+- name: Compile for native arch
+  lineinfile:
+    dest: /etc/makepkg.conf
+    state: present
+    regexp: '^CFLAGS='
+    line: 'CFLAGS="-march=native -mtune=native -O2 -pipe -fno-plt'
+
+- name: Set compile thread count
+  lineinfile:
+    dest: /etc/makepkg.conf
+    state: present
+    regexp: 'MAKEFLAGS="-j2'
+    line: 'MAKEFLAGS="-j{{ ansible_facts.processor_vcpus }}"'
+
+- name: Install ccache
+  pacman:
+    name: ccache
+    state: present
+
+- name: Enable ccache
+  lineinfile:
+    dest: /etc/makepkg.conf
+    state: present
+    regexp: 'BUILDENV='
+    line: 'BUILDENV=(!distcc color ccache check !sign)'
+
+# package: ansible-aur
+- name: Install yay
+  aur:
+    name: yay
+    use: makepkg
+    state: present
+  become: true
+  become_user: "{{ default_user }}"
