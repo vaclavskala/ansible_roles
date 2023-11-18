@@ -65,3 +65,8 @@ argument_specs:
         required: false
         default: "UNDEFINED"
         description: "Custom config inserted to vhost"
+      nginx_create_vhost_whitelist:
+        type: "list"
+        elements: 'str'
+        required: false
+        description: "List of whitelisted IPs"

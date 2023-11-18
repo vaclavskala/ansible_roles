@@ -42,6 +42,11 @@ server {
 {% if nginx_create_vhost_custom_config is defined %}
         {{ nginx_create_vhost_custom_config }}{% endif %}
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+{% for ip in nginx_create_vhost_whitelist %}
+        allow {{ ip }};
+{% endfor %}
+        deny all;
+{% endif %}
     }
     access_log {{ nginx_log_path }}/{{ nginx_create_vhost_domain[0] }}-access.log main buffer=4k flush=60;
     error_log  {{ nginx_log_path }}/{{ nginx_create_vhost_domain[0] }}-error.log error;
