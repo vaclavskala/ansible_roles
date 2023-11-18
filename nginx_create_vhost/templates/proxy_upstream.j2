@@ -1,0 +1,13 @@
+upstream {{ nginx_create_vhost_domain[0] | regex_replace('\.','_') }} {
+{% if nginx_create_vhost_proxy_ip | length > 1 %}
+    least_conn;
+{% endif %}
+{% if (nginx_worker_processes > 1) or (nginx_worker_processes == 'auto') %}
+    zone upstreams 64K;
+{% endif %}
+    keepalive {{ nginx_create_vhost_keepalive_count }};
+    keepalive_timeout {{ nginx_create_vhost_keepalive_timeout }};
+{% for ip in nginx_create_vhost_proxy_ip %}
+    server {{ ip }}:{{ nginx_create_vhost_proxy_port }}{% if nginx_create_vhost_proxy_ip | length > 1 %} max_fails=2 fail_timeout=2s {% endif %};
+{% endfor %}
+}
