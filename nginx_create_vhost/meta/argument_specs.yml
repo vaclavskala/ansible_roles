@@ -59,6 +59,7 @@ argument_specs:
         default: 'proxy'
         choices:
           - 'proxy'
+          - 'domain'
         description: "Vhost type"
       nginx_create_vhost_custom_config:
         type: "str"
@@ -70,3 +71,8 @@ argument_specs:
         elements: 'str'
         required: false
         description: "List of whitelisted IPs"
+      nginx_create_vhost_root:
+        type: "str"
+        required: false
+        default: "UNDEFINED"
+        description: "Domain document root"

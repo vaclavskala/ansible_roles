@@ -9,12 +9,14 @@
     that:
       - "item | ansible.netcommon.ipaddr"
   loop: "{{ nginx_create_vhost_proxy_ip }}"
+  when: nginx_create_vhost_type == 'proxy'
 
 - name: Assert nginx_create_vhost_proxy_port is in range of unix ports
   assert:
     that:
       - "nginx_create_vhost_proxy_port > 0"
       - "nginx_create_vhost_proxy_port < 65535"
+  when: nginx_create_vhost_type == 'proxy'
 
 - name: If dehydrated not used check if cert and key defined
   assert:
