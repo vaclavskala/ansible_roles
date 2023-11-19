@@ -1,1 +1,2 @@
         root {{ nginx_create_vhost_root }};
+        index {% for index in nginx_create_vhost_index %} {{ index }}{% endfor %};

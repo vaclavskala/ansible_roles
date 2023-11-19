@@ -76,3 +76,8 @@ argument_specs:
         required: false
         default: "UNDEFINED"
         description: "Domain document root"
+      nginx_create_vhost_index:
+        type: "list"
+        elements: 'str'
+        required: false
+        description: "List of index files"
