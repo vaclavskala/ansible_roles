@@ -1,0 +1,9 @@
+{{ nginx_log_path }}/*log {
+        missingok
+        create 644 {{ nginx_user }} root
+        sharedscripts
+        compress
+        postrotate
+            systemctl reload nginx
+        endscript
+}

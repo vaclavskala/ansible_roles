@@ -2,3 +2,4 @@ dependencies:
   - role: firewall
     when: global_disable_firewall is not defined
   - role: systemd_daemon_reload
+  - role: logrotate
