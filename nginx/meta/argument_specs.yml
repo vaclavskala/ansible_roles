@@ -18,6 +18,6 @@ argument_specs:
         description: "Nginx user"
       nginx_hardening:
         type: "bool"
-        required: true
+        required: false
         default: true
         description: "If copy nginx systemd hardening config"
