@@ -81,3 +81,8 @@ argument_specs:
         elements: 'str'
         required: false
         description: "List of index files"
+      nginx_create_vhost_flush_timeout:
+        type: "int"
+        required: false
+        default: "1"
+        description: "Access log flush interval"

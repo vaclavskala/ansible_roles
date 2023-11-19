@@ -7,3 +7,4 @@ nginx_create_vhost_body_size: '1m'
 nginx_create_vhost_whitelist: []
 nginx_create_vhost_index:
   - 'index.php'
+nginx_create_vhost_flush_timeout: 1
