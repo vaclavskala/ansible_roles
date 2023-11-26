@@ -86,3 +86,18 @@ argument_specs:
         required: false
         default: "1"
         description: "Access log flush interval"
+      nginx_create_vhost_enable_cache:
+        type: "bool"
+        required: false
+        default: true
+        description: "If enable cache for static files"
+      nginx_create_vhost_static_files:
+        type: "list"
+        elements: 'str'
+        required: false
+        description: "List of static files to cache"
+      nginx_create_vhost_static_files_blacklist:
+        type: "list"
+        elements: 'str'
+        required: false
+        description: "List of static files to ignore from cache"

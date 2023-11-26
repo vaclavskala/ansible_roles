@@ -3,3 +3,5 @@ nginx_log_path: '/var/log/nginx'
 nginx_hardening: true
 nginx_rotate_count: 4
 nginx_freq: "weekly"
+nginx_cache_inactive_sec: 300
+nginx_cache_size_gb: 1

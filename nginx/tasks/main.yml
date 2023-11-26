@@ -19,6 +19,31 @@
     mode: '0644'
   notify: Reload nginx
 
+- name: Create /var/cache/nginx directory
+  file:
+    path: /var/cache/nginx
+    state: directory
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+    mode: '0700'
+
+- name: Create /etc/nginx/conf.d directory
+  file:
+    path: /etc/nginx/conf.d
+    state: directory
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+    mode: '0755'
+
+- name: Create cache conf
+  template:
+    src: "cache.conf.j2"
+    dest: "/etc/nginx/conf.d/cache.conf"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+    mode: '0644'
+  notify: Reload nginx
+
 - name: Create /etc/nginx/sites-avaliable/ directory
   file:
     path: '/etc/nginx/sites-avaliable/'
@@ -114,7 +139,7 @@
     dest: "/etc/logrotate.d/nginx"
     owner: "root"
     group: "root"
-    mode: 0644
+    mode: '0644'
 
 - name: Start nginx
   systemd:

@@ -19,6 +19,7 @@ server {
     ssl_certificate     {{ nginx_create_vhost_ssl_cert }};
     ssl_certificate_key {{ nginx_create_vhost_ssl_key }};
 {% endif %}
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
     location / {
 {% if nginx_create_vhost_type == "proxy" %}
@@ -31,7 +32,6 @@ server {
 {% endif %}
 {% if nginx_create_vhost_custom_config is defined %}
         {{ nginx_create_vhost_custom_config }}{% endif %}
-        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 {% if nginx_create_vhost_whitelist | length > 0 %}
 {% for ip in nginx_create_vhost_whitelist %}
         allow {{ ip }};
@@ -39,6 +39,10 @@ server {
         deny all;
 {% endif %}
     }
+{% if nginx_create_vhost_type == "proxy" and nginx_create_vhost_enable_cache %}
+{% include './proxy_cache.j2' %}
+
+{% endif %}
     access_log {{ nginx_log_path }}/{{ nginx_create_vhost_domain[0] }}-access.log main buffer=4k flush={{ nginx_create_vhost_flush_timeout }};
     error_log  {{ nginx_log_path }}/{{ nginx_create_vhost_domain[0] }}-error.log error;
 }

@@ -36,3 +36,13 @@ argument_specs:
         required: false
         default: "4"
         description: "File retention for syslog logrotate"
+      nginx_cache_inactive_sec:
+        type: "int"
+        required: false
+        default: "300"
+        description: "After how long purge unused files from cache"
+      nginx_cache_size_gb:
+        type: "int"
+        required: false
+        default: "1"
+        description: "Maximum size for nginx cache"
