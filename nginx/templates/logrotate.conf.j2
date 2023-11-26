@@ -1,4 +1,6 @@
 {{ nginx_log_path }}/*log {
+        rotate {{ nginx_rotate_count }}
+        {{ nginx_freq }}
         missingok
         create 644 {{ nginx_user }} root
         sharedscripts

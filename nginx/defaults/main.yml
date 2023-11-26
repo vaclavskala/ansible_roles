@@ -1,3 +1,5 @@
 nginx_worker_processes: 1
 nginx_log_path: '/var/log/nginx'
 nginx_hardening: true
+nginx_rotate_count: 4
+nginx_freq: "weekly"

@@ -21,3 +21,18 @@ argument_specs:
         required: false
         default: true
         description: "If copy nginx systemd hardening config"
+      nginx_rotate_freq:
+        type: "str"
+        required: false
+        default: "weekly"
+        choices:
+          - 'hourly'
+          - 'daily'
+          - 'weekly'
+          - 'monthly'
+          - 'yearly'
+      nginx_rotate_count:
+        type: "int"
+        required: false
+        default: "4"
+        description: "File retention for syslog logrotate"
