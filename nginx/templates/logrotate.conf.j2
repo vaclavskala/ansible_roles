@@ -5,6 +5,7 @@
         create 644 {{ nginx_user }} root
         sharedscripts
         compress
+        delaycompress
         postrotate
             systemctl reload nginx
         endscript
