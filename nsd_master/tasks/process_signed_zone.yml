@@ -28,7 +28,7 @@
     patterns: "*.key"
   register: nsd_key_exist
 
-- name: Generate missing keys for zone "{{ item }}"
+- name: Generate missing keys for zone "{{ item }}" # noqa no-changed-when
   command: dnssec-keygen -3 -a ED448 -K "/etc/nsd/data/{{ item }}/keys/" -q "{{ item }}"
   when: nsd_key_exist.matched == 0
   register: nsd_key_name

@@ -50,6 +50,7 @@
     repo: 'https://github.com/dutchcoders/transfer.sh.git'
     dest: '{{ transfer_path }}/git'
     version: main
+  become: true
   become_user: "{{ transfer_user }}"
   notify:
     - Generate transfer binary

@@ -37,7 +37,7 @@
     mode: '600'
   when: create_user_ssh_key is defined
 
-- name: Set zsh config for "{{ create_user_username }}"
+- name: Set zsh config for "{{ create_user_username }}" # noqa: var-naming[no-role-prefix]
   import_role:
     name: zsh_user
   vars:

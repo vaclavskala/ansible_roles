@@ -1,2 +1,2 @@
-- name: Apply sysctl
+- name: Apply sysctl # noqa no-changed-when
   command: "sysctl -p --system"

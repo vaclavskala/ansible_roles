@@ -65,7 +65,7 @@
 
 - name: Check if lxd use default config
   shell:
-    cmd: 'lxd init --dump | grep -qF "storage_pools: []"'
+    cmd: 'set -o pipefail && lxd init --dump | grep -qF "storage_pools: []"'
   register: lxd_config_default
   changed_when: false
   failed_when: false
@@ -79,6 +79,6 @@
     mode: '0400'
   when: lxd_config_default.rc == 0
 
-- name: Init lxd
+- name: Init lxd # noqa no-changed-when
   shell: 'lxd init --preseed < /var/lib/lxd/config.seed'
   when: lxd_config_default.rc == 0

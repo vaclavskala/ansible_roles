@@ -2,4 +2,3 @@ dependencies:
   - role: postfix
     when: opendkim_postfix_integration
   - role: systemd_daemon_reload
-

@@ -1,3 +1,4 @@
-- name: Rebuild bat cache
+- name: Rebuild bat cache # noqa no-changed-when
   command: "bat cache --build"
+  become: true
   become_user: "{{ zsh_user }}"
