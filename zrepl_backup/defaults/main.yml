@@ -1,2 +1,4 @@
 zrepl_proxy_path: /usr/local/libexec/zrepl
 zrepl_default_path: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:"
+zrepl_socket_activation: true
+zrepl_socket_idle_time: 60

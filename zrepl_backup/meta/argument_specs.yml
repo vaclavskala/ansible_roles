@@ -37,7 +37,7 @@ argument_specs:
       zrepl_socket_activation:
         type: "bool"
         required: false
-        default: false
+        default: true
         description: "If use socket activation"
       zrepl_socket_idle_time:
         type: "int"
