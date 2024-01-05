@@ -31,7 +31,7 @@ jobs:
       large_blocks: true
       encrypted: {{ zrepl_encrypted }}
       raw: {{ zrepl_encrypted }}
-{% if zrepl_bandwidth_limit_mb is defined %}
+{% if zrepl_bandwidth_limit_mb > 0 %}
       bandwidth_limit:
         max: {{ zrepl_bandwidth_limit_mb }} MiB
 {% endif %}

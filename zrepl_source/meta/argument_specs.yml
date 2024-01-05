@@ -44,7 +44,7 @@ argument_specs:
       zrepl_bandwidth_limit_mb:
         type: "int"
         required: false
-        default: "Unlimited"
+        default: "0 - Unlimited"
         description: "Limit backup speed"
       zrepl_source_retention:
         type: "dict"
