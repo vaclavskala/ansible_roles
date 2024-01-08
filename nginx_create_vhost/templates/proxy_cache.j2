@@ -1,4 +1,4 @@
-    location ~* ^.+\.({{ nginx_create_vhost_static_files | difference(nginx_create_vhost_static_files_blacklist) | join('|') }})$ {
+    location ~* ^.+\.({{ nginx_create_vhost_static_files | difference(nginx_create_vhost_static_files_blacklist) | sort | join('|') }})$ {
 {% include './proxy.j2' %}
         proxy_cache nrpcache;
         proxy_cache_key "$scheme://$host$request_uri";
