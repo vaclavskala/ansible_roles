@@ -63,15 +63,15 @@
 - name: Copy default http conf
   template:
     src: "http_vhost.conf.j2"
-    dest: "/etc/nginx/sites-avaliable/http_vhost.conf.j2"
+    dest: "/etc/nginx/sites-avaliable/http_vhost.conf"
     owner: "{{ nginx_user }}"
     group: "{{ nginx_user }}"
     mode: '0644'
 
-- name: Enable http conf
+- name: Enable default http conf
   ansible.builtin.file:
-    src: "/etc/nginx/sites-avaliable/http_vhost.conf.j2"
-    dest: "/etc/nginx/sites-enabled/http_vhost.conf.j2"
+    src: "/etc/nginx/sites-avaliable/http_vhost.conf"
+    dest: "/etc/nginx/sites-enabled/http_vhost.conf"
     owner: "{{ nginx_user }}"
     group: "{{ nginx_user }}"
     state: link
