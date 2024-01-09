@@ -1,0 +1,77 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: Install goaccess
+  package:
+    name:
+      - goaccess
+
+- name: Create group "{{ goaccess_user }}"
+  group:
+    name: "{{ goaccess_user }}"
+    state: present
+
+- name: Create user "{{ goaccess_user }}"
+  user:
+    name: "{{ goaccess_user }}"
+    group: "{{ goaccess_user }}"
+    shell: "/usr/bin/nologin"
+
+- name: "Test if file {{ goaccess_output_html }} exist"
+  stat:
+    path: "{{ goaccess_output_html }}"
+  register: goaccess_output_file
+
+- name: "Create {{ goaccess_output_html }} file"
+  file:
+    path: "{{ goaccess_output_html }}"
+    owner: "{{ goaccess_user }}"
+    group: "{{ goaccess_user }}"
+    mode: '0644'
+    state: touch
+  when: goaccess_output_file.stat.exists is defined and not goaccess_output_file.stat.exists
+
+- name: Find all log files in specified paths
+  find:
+    paths: "{{ (item.split('/') | map('trim'))[:-1] | join('/') }}"
+    patterns: "{{ item.split('/') | last }}"
+  register: goaccess_detected_log_paths
+  loop: "{{ goaccess_log_paths }}"
+
+- name: Set log files paths
+  set_fact:
+    goaccess_log_paths_processed: "{{ goaccess_detected_log_paths.results | json_query('[].files[].path') }}"
+
+- name: Create goaccess configuration
+  blockinfile:
+    path: "/etc/goaccess/goaccess.conf"
+    marker: "### {mark} CUSTOM CONFIG BLOCK"
+    create: true
+    block: |
+      {% for log in goaccess_log_paths_processed %}
+      log-file {{ log }}
+      {% endfor %}
+      {% if goaccess_websocket_url is defined %}ws-url {{ goaccess_websocket_url }}{% endif %}
+      addr {{ goaccess_bind_ip }}
+      port {{ goaccess_bind_port }}
+      {% if goaccess_geo_db_path is defined %}geoip-database {{ goaccess_geo_db_path }}{% endif %}
+    owner: "{{ goaccess_user }}"
+    group: "{{ goaccess_user }}"
+    mode: '0644'
+  notify: Restart goaccess
+
+- name: Create goaccess systemd unit
+  template:
+    src: "systemd.j2"
+    dest: "/etc/systemd/system/goaccess.service"
+    owner: "root"
+    group: "root"
+    mode: '0600'
+
+- name: Enable goaccess
+  systemd:
+    name: goaccess
+    state: started
+    enabled: true
+    masked: false

@@ -1,0 +1,12 @@
+- name: Assert goaccess_bind_ip is IP address
+  assert:
+    that:
+      - goaccess_bind_ip is defined
+      - goaccess_bind_ip | ansible.netcommon.ipaddr
+
+- name: Assert goaccess port number is in range of unix ports
+  assert:
+    that:
+      - goaccess_bind_port is defined
+      - goaccess_bind_port > 0
+      - goaccess_bind_port < 65535

@@ -1,0 +1,3 @@
+goaccess_user: 'goaccess'
+goaccess_bind_ip: '127.0.0.1'
+goaccess_bind_port: 7890

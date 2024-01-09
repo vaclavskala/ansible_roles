@@ -1,0 +1,37 @@
+argument_specs:
+  main:
+    short_description: Parameters for goaccess role
+    options:
+      goaccess_log_paths:
+        type: "list"
+        elements: "str"
+        required: true
+        description: "From which paths read logs"
+      goaccess_output_html:
+        type: "str"
+        required: true
+        description: "Path to output html"
+      goaccess_websocket_url:
+        type: "str"
+        required: true
+        description: "URL for websocket"
+      goaccess_user:
+        type: "str"
+        required: false
+        default: "goaccess"
+        description: "Name of goaccess user"
+      goaccess_bind_ip:
+        type: "str"
+        required: false
+        default: '127.0.0.1'
+        description: "On which IP listen"
+      goaccess_bind_port:
+        type: "int"
+        required: false
+        default: '7890'
+        description: "On which port listen"
+      goaccess_geo_db_path:
+        type: "str"
+        required: false
+        default: "UNDEFINED"
+        description: "Path to geoIP file"

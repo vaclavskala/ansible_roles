@@ -1,0 +1,6 @@
+- name: Restart goaccess
+  systemd:
+    name: goaccess
+    state: restarted
+    enabled: true
+    masked: false
