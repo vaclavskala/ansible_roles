@@ -1,0 +1,43 @@
+- name: Include extended validation
+  include_tasks: argument_validation.yml
+  when: extended_validation is defined
+
+- name: Install grafana
+  package:
+    name:
+      - grafana
+    state: present
+
+- name: Copy grafana config
+  template:
+    src: 'grafana.ini.j2'
+    dest: "{{ grafana_config_path }}"
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_user }}"
+    mode: "600"
+  notify: Restart grafana
+
+- name: "Create /etc/systemd/system/{{ grafana_service_name }}.service.d directory"
+  file:
+    path: "/etc/systemd/system/{{ grafana_service_name }}.service.d"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: '0755'
+
+- name: Copy systemd hardening
+  template:
+    src: 'systemd_hardening.j2'
+    dest: "/etc/systemd/system/{{ grafana_service_name }}.service.d/hardening.conf"
+    owner: "root"
+    group: "root"
+    mode: '0755'
+  notify:
+    - Systemd daemon-reload
+    - Restart grafana
+
+- name: Start grafana
+  systemd:
+    name: "{{ grafana_service_name }}"
+    state: started
+    enabled: true

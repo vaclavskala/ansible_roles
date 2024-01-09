@@ -1,0 +1,20 @@
+[Service]
+CapabilityBoundingSet=
+DeviceAllow=
+LockPersonality=true
+MemoryDenyWriteExecute=false
+ProtectClock=true
+ProtectHostname=true
+ProtectKernelLogs=true
+ProtectProc=invisible
+ProtectSystem=strict
+ReadWritePaths={{ grafana_data_path }} {{ grafana_logs_path }}
+RemoveIPC=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+ProcSubset=pid
+UMask=0027

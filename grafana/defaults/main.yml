@@ -1,0 +1,6 @@
+grafana_data_path: '/var/lib/grafana/'
+grafana_logs_path: '/var/log/grafana'
+grafana_protocol: 'http'
+grafana_bind_ip: '127.0.0.1'
+grafana_http_port: 3000
+grafana_user: 'grafana'

@@ -1,0 +1,12 @@
+- name: Assert grafana_bind_ip is IP address
+  assert:
+    that:
+      - grafana_bind_ip is defined
+      - grafana_bind_ip | ansible.netcommon.ipaddr
+
+- name: Assert grafana port number is in range of unix ports
+  assert:
+    that:
+      - grafana_http_port is defined
+      - grafana_http_port > 0
+      - grafana_http_port < 65535
