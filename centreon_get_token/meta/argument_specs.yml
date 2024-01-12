@@ -1,0 +1,13 @@
+argument_specs:
+  main:
+    short_description: Parameters for centreon get token role
+    options:
+      centreon_global_base_url:
+        type: "str"
+        required: true
+        description: "Centreon domain"
+      centreon_get_token_url:
+        type: "str"
+        required: false
+        default: "<centreon_global_base_url>/centreon/api/index.php?action=authenticate"
+        description: "URL for centreon auth api endpoint"

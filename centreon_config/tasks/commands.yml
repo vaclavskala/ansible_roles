@@ -1,0 +1,8 @@
+- name: "Create command {{ item.name }}"
+  include_role:
+    name: centreon_api
+  vars:
+    centreon_api_action: 'add'
+    centreon_api_object: 'CMD'
+    centreon_api_value: "{{ item.name }};check;{{ item.command }}"
+    centreon_api_authentication_token: "{{ centreon_authentication_token }}"

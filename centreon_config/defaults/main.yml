@@ -1,0 +1,117 @@
+centreon_config_commands:
+  - name: check_host_alive
+    command: '$USER1$/check_icmp -H $HOSTADDRESS$ -w 3000.0,100% -c 5000.0,100% -i 100 -n 2'
+  - name: check_nrpe
+    command: '$USER1$/check_nrpe -4 -H $HOSTADDRESS$ -t 120 -c $ARG1$ $ARG2$'
+
+centreon_config_host_templates:
+  - name: Linux
+    alias: Linux
+    params:
+      - name: check_command
+        value: check_host_alive
+      - name: check_period
+        value: 24x7
+      - name: host_max_check_attempts
+        value: 3
+      - name: check_interval
+        value: 5
+      - name: host_retry_check_interval
+        value: 1
+      - name: host_notifications_enabled
+        value: 1
+      - name: notification_interval
+        value: 5
+      - name: notification_period
+        value: 24x7
+      - name: host_notification_options
+        value: d,u,r,f
+    contacts:
+      - name: Admin
+    service_templates:
+      - Disk_usage
+      - Load
+      - Memory
+      - NTP_time
+      - OOM_killer
+      - RO_mounts
+      - Zombie_procs
+
+centreon_config_service_templates:
+  - name: generic_service
+    alias: generic_service
+    params:
+      - name: check_period
+        value: 24x7
+      - name: service_max_check_attempts
+        value: 3
+      - name: service_normal_check_interval
+        value: 5
+      - name: service_retry_check_interval
+        value: 1
+      - name: service_notifications_enabled
+        value: 1
+      - name: notification_interval
+        value: 5
+      - name: notification_period
+        value: 24x7
+      - name: service_notification_options
+        value: w,u,c,r,f
+    contacts:
+      - name: Admin
+  - name: Disk_usage
+    alias: Disk_usage
+    template: generic_service
+    params:
+      - name: check_command
+        value: check_nrpe
+      - name: check_command_arguments
+        value: '!check_disk!""'
+  - name: Load
+    alias: Load
+    template: generic_service
+    params:
+      - name: check_command
+        value: check_nrpe
+      - name: check_command_arguments
+        value: '!check_load!""'
+  - name: Memory
+    alias: Memory
+    template: generic_service
+    params:
+      - name: check_command
+        value: check_nrpe
+      - name: check_command_arguments
+        value: '!check_mem!""'
+  - name: NTP_time
+    alias: NTP_time
+    template: generic_service
+    params:
+      - name: check_command
+        value: check_nrpe
+      - name: check_command_arguments
+        value: '!check_ntp!""'
+  - name: OOM_killer
+    alias: OOM_killer
+    template: generic_service
+    params:
+      - name: check_command
+        value: check_nrpe
+      - name: check_command_arguments
+        value: '!check_oom!""'
+  - name: RO_mounts
+    alias: RO_mounts
+    template: generic_service
+    params:
+      - name: check_command
+        value: check_nrpe
+      - name: check_command_arguments
+        value: '!check_ro_mounts!""'
+  - name: Zombie_procs
+    alias: Zombie_procs
+    template: generic_service
+    params:
+      - name: check_command
+        value: check_nrpe
+      - name: check_command_arguments
+        value: '!check_zombie_procs!""'

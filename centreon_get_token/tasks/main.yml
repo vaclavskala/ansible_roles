@@ -1,0 +1,14 @@
+- name: Get authentication token
+  become: false
+  uri:
+    url: "{{ centreon_get_token_url }}"
+    method: POST
+    body: "{{ lookup('template', '../templates/login.j2') }}"
+    body_format: form-urlencoded
+  register: centreon_login_response
+  no_log: false
+  delegate_to: localhost
+
+- name: Set authentication token
+  set_fact:
+    centreon_authentication_token: "{{ centreon_login_response.json.authToken }}"

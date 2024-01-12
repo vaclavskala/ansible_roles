@@ -1,0 +1,11 @@
+- name: Create centreon commands
+  include_tasks: commands.yml
+  loop: "{{ centreon_config_commands }}"
+
+- name: Create centreon service templates
+  include_tasks: service_template.yml
+  loop: "{{ centreon_config_service_templates }}"
+
+- name: Create centreon host templates
+  include_tasks: host_template.yml
+  loop: "{{ centreon_config_host_templates }}"

@@ -1,0 +1,35 @@
+- name: "Apply service template"
+  become: false
+  uri:
+    url: "{{ centreon_url }}"
+    method: POST
+    body:
+      action: add
+      object: HTPL
+#      values: "Linux-ansible-test;Test host;;;central;Linux"
+#      values: "test;Test host;127.0.0.1;generic-host;Central;"
+      values: "{{ item.name }};{{ item.alias }};;;;"
+    body_format: json
+    headers:
+      centreon-auth-token: "{{ centreon_authentication_token }}"
+  delegate_to: localhost
+
+- name: "Apply service template"
+  become: false
+  uri:
+    url: "{{ centreon_url }}"
+    method: POST
+    body:
+      action: addhosttemplate
+      object: STPL
+      values: "Load;{{ item.name }}"
+    body_format: json
+    headers:
+      centreon-auth-token: "{{ centreon_authentication_token }}"
+    status_code:
+      - 200
+      - 409
+  delegate_to: localhost
+  loop: "{{ item.params }}"
+  loop_control:
+    loop_var: item_param

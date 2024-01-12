@@ -1,0 +1,1 @@
+centreon_api_url: "{{ centreon_global_base_url }}/centreon/api/index.php?action=action&object=centreon_clapi"

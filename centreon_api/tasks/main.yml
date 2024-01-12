@@ -1,0 +1,16 @@
+- name: "Call API. Object: {{ centreon_api_object }}; Action: {{ centreon_api_action }}; Values: {{ centreon_api_value }}"
+  become: false
+  delegate_to: localhost
+  uri:
+    url: "{{ centreon_api_url }}"
+    method: POST
+    body:
+      action: "{{ centreon_api_action }}"
+      object: "{{ centreon_api_object }}"
+      values: "{{ centreon_api_value }}"
+    body_format: json
+    headers:
+      centreon-auth-token: "{{ centreon_api_authentication_token }}"
+    status_code:
+      - 200
+      - 409

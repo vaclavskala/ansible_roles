@@ -1,0 +1,34 @@
+- name: "Create service template {{ item.name }}"
+  include_role:
+    name: centreon_api
+  vars:
+    centreon_api_action: 'add'
+    centreon_api_object: 'STPL'
+    centreon_api_value: "{{ item.name }};{{ item.alias }};{% if item.template is defined %}{{ item.template }}{% endif %}"
+    centreon_api_authentication_token: "{{ centreon_authentication_token }}"
+
+- name: "Set service template {{ item.name }} parameters"
+  include_role:
+    name: centreon_api
+  vars:
+    centreon_api_action: 'setparam'
+    centreon_api_object: 'STPL'
+    centreon_api_value: "{{ item.name }};{{ item_param.name }};{{ item_param.value }}"
+    centreon_api_authentication_token: "{{ centreon_authentication_token }}"
+  loop: "{{ item.params }}"
+  loop_control:
+    loop_var: item_param
+  when: item.params is defined
+
+- name: "Set service template {{ item.name }} contacts"
+  include_role:
+    name: centreon_api
+  vars:
+    centreon_api_action: 'addcontactgroup'
+    centreon_api_object: 'STPL'
+    centreon_api_value: "{{ item.name }};{{ item_contact.name }}"
+    centreon_api_authentication_token: "{{ centreon_authentication_token }}"
+  loop: "{{ item.contacts }}"
+  loop_control:
+    loop_var: item_contact
+  when: item.contacts is defined

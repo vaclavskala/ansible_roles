@@ -1,0 +1,57 @@
+- name: "Create service template"
+  become: false
+  uri:
+    url: "{{ centreon_url }}"
+    method: POST
+    body:
+      action: add
+      object: STPL
+      values: "{{ item.name }};{{ item.alias }};{% if item.template is defined %}{{ item.template }}{% endif %}"
+    body_format: json
+    headers:
+      centreon-auth-token: "{{ centreon_authentication_token }}"
+    status_code:
+      - 200
+      - 409
+  delegate_to: localhost
+
+- name: "Apply service template"
+  become: false
+  uri:
+    url: "{{ centreon_url }}"
+    method: POST
+    body:
+      action: setparam
+      object: STPL
+      values: "{{ item.name }};{{ item_param.name }};{{ item_param.value }}"
+    body_format: json
+    headers:
+      centreon-auth-token: "{{ centreon_authentication_token }}"
+    status_code:
+      - 200
+      - 409
+  delegate_to: localhost
+  loop: "{{ item.params }}"
+  loop_control:
+    loop_var: item_param
+
+- name: "Apply service template"
+  become: false
+  uri:
+    url: "{{ centreon_url }}"
+    method: POST
+    body:
+      action: addcontactgroup
+      object: STPL
+      values: "{{ item.name }};{{ item_contact.name }}"
+    body_format: json
+    headers:
+      centreon-auth-token: "{{ centreon_authentication_token }}"
+    status_code:
+      - 200
+      - 409
+  delegate_to: localhost
+  loop: "{{ item.contacts }}"
+  loop_control:
+    loop_var: item_contact
+  when: item.contacts is defined

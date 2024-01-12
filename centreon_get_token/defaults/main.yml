@@ -1,0 +1,1 @@
+centreon_get_token_url: "{{ centreon_global_base_url }}/centreon/api/index.php?action=authenticate"

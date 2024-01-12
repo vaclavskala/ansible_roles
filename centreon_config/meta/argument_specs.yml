@@ -1,0 +1,93 @@
+argument_specs:
+  main:
+    short_description: Parameters for centreon config role
+    options:
+      centreon_config_commands:
+        type: "list"
+        elements: "dict"
+        required: true
+        description: "Centreon check commands"
+        options:
+          name:
+            type: "str"
+            required: true
+            description: "Name of command"
+          command:
+            type: "str"
+            required: true
+            description: "Command for check"
+      centreon_config_host_templates:
+        type: "list"
+        elements: "dict"
+        required: true
+        description: "Centreon host templates"
+        options:
+          name:
+            type: "str"
+            required: true
+            description: "Name of host template"
+          alias:
+            type: "str"
+            required: true
+            description: "Alias for host template"
+          params:
+            type: "list"
+            elements: "dict"
+            required: false
+            description: "Parameters for host template"
+            options:
+              name:
+                type: "str"
+                required: true
+                description: "Name of parameter"
+              value:
+                type: "str"
+                required: true
+                description: "Value for parameter"
+          contacts:
+            type: "list"
+            elements: "str"
+            required: false
+            description: "List of contacts for template"
+          service_templates:
+            type: "list"
+            elements: "str"
+            required: false
+            description: "List of service templates for host template"
+      centreon_config_service_templates:
+        type: "list"
+        elements: "dict"
+        required: true
+        description: "Centreon service templates"
+        options:
+          name:
+            type: "str"
+            required: true
+            description: "Name ofservice template"
+          alias:
+            type: "str"
+            required: true
+            description: "Alias for service template"
+          template:
+            type: "str"
+            required: false
+            description: "Parent template for service template"
+          params:
+            type: "list"
+            elements: "dict"
+            required: false
+            description: "Parameters for service template"
+            options:
+              name:
+                type: "str"
+                required: true
+                description: "Name of parameter"
+              value:
+                type: "str"
+                required: true
+                description: "Value for parameter"
+          contacts:
+            type: "list"
+            elements: "str"
+            required: false
+            description: "List of contacts for template"

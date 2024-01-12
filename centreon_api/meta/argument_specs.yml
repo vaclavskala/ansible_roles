@@ -1,0 +1,25 @@
+argument_specs:
+  main:
+    short_description: Parameters for centreon api role
+    options:
+      centreon_global_base_url:
+        type: "str"
+        required: true
+        description: "Centreon domain"
+      centreon_api_action:
+        type: "str"
+        required: true
+        description: "Action parameter for centreon api"
+      centreon_api_object:
+        type: "str"
+        required: true
+        description: "Object parameter for centreon api"
+      centreon_api_value:
+        type: "str"
+        required: true
+        description: "Values parameter for centreon api"
+      centreon_api_url:
+        type: "str"
+        required: false
+        default: "<centreon_global_base_url>/centreon/api/index.php?action=action&object=centreon_clapi"
+        description: "URL for centreon CLapi endpoint"
