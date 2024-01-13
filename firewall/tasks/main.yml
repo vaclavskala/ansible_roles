@@ -14,6 +14,7 @@
     - /etc/nftables/input
     - /etc/nftables/forward
     - /etc/nftables/other
+    - /etc/nftables/nat
 
 - name: Copy basic nftables rules
   copy:
