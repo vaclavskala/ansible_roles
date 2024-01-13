@@ -6,27 +6,14 @@
 
 - name: Creates nftables directory
   file:
-    path: /etc/nftables/
+    path: "{{ item }}"
     state: directory
     mode: '0700'
-
-- name: Creates input directory
-  file:
-    path: /etc/nftables/input
-    state: directory
-    mode: '0700'
-
-- name: Creates forward directory
-  file:
-    path: /etc/nftables/forward
-    state: directory
-    mode: '0700'
-
-- name: Creates other directory
-  file:
-    path: /etc/nftables/other
-    state: directory
-    mode: '0700'
+  with_items:
+    - /etc/nftables/
+    - /etc/nftables/input
+    - /etc/nftables/forward
+    - /etc/nftables/other
 
 - name: Copy basic nftables rules
   copy:
