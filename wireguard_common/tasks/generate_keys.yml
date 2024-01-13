@@ -12,8 +12,8 @@
     creates: 'privkey'
     chdir: "{{ '/etc/wireguard/' + wireguard_interface_name }}"
 
-- name: Generate public key
-  shell: 'set -o pipefail && cat privkey | wg pubkey > pubkey'
+- name: Generate public key # noqa risky-shell-pipe
+  shell: '/bin/bash -c "set -o pipefail && cat privkey | wg pubkey > pubkey"'
   args:
     creates: 'pubkey'
     chdir: "{{ '/etc/wireguard/' + wireguard_interface_name }}"
