@@ -1,0 +1,3 @@
+{% for nat in lxd_container_dnats %}
+iif != {{ lxd_container_bridge_name }} {{ nat.split(';')[0] }} dport {{ nat.split(';')[1] }} counter dnat to {{ lxd_container_ipv4 }}{% if nat.split(';') | length == 3 %}:{{ nat.split(';')[2] }}{% endif %}
+{% endfor %}

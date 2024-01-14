@@ -3,3 +3,4 @@ lxd_container_source: 'https://images.linuxcontainers.org'
 lxd_container_wait_dhcp: true
 lxd_container_limits: {}
 lxd_container_wait_timeout: 60
+lxd_container_dnats: []

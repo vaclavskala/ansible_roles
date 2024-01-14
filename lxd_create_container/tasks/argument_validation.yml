@@ -1,0 +1,25 @@
+- name: Assert lxd_container_dnats has correct format
+  assert:
+    that:
+      - item.split(';') | length == 2 or item.split(';') | length == 3
+  loop: "{{ lxd_container_dnats }}"
+
+- name: Assert lxd_container_dnats port is valid
+  assert:
+    that:
+      - item.split(';')[0] == 'udp' or item.split(';')[0] == 'tcp'
+  loop: "{{ lxd_container_dnats }}"
+
+- name: Assert lxd_container_dnats source port number is in range of unix ports
+  assert:
+    that:
+      - item.split(';')[1] is defined
+      - item.split(';')[1] | int > 0
+      - item.split(';')[1] | int < 65535
+  loop: "{{ lxd_container_dnats }}"
+
+- name: Assert lxd_container_dnats destination port number is in range of unix ports
+  assert:
+    that:
+      - (item.split(';')[2] is defined and item.split(';')[2] | int > 0 and item.split(';')[2] | int < 65535) or (item.split(';')[2] is not defined)
+  loop: "{{ lxd_container_dnats }}"

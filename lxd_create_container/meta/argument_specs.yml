@@ -44,3 +44,9 @@ argument_specs:
         type: "str"
         required: true
         description: "Name of lxd bridge to which attach container"
+      lxd_container_dnats:
+        type: "list"
+        elements: "str"
+        required: false
+        default: '[]'
+        description: "List of protocol;source port;destination port touples"
