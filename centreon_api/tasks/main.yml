@@ -14,3 +14,5 @@
     status_code:
       - 200
       - 409
+  register: api_call_result
+  changed_when: api_call_result.status == 200 and centreon_api_action != 'setparam' and centreon_api_action != 'addcontactgroup'
