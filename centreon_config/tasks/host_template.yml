@@ -4,7 +4,7 @@
   vars:
     centreon_api_action: 'add'
     centreon_api_object: 'HTPL'
-    centreon_api_value: "{{ item.name }};{{ item.alias }};;;;"
+    centreon_api_value: "{{ item.name }};{{ item.alias }};;{% if item.template is defined %}{{ item.template }}{% endif %};;"
     centreon_api_authentication_token: "{{ centreon_authentication_token }}"
 
 - name: "Set host template {{ item.name }} parameters"
