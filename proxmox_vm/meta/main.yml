@@ -1,0 +1,2 @@
+dependencies:
+  - role: proxmox_auth_token

@@ -1,0 +1,11 @@
+proxmox_vm_default_config:
+  agent: 'enabled=1'
+  autostart: true
+  cpu: 'host'
+  hotplug: "disk,network,usb,cpu"
+  numa: "1"
+  onboot: true
+  ostype: 'l26'
+  scsihw: 'virtio-scsi-single'
+  vga: 'virtio'
+proxmox_vm_verify_certs: true

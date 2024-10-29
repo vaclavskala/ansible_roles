@@ -1,0 +1,101 @@
+- name: Get next VMID
+  when: proxmox_vm_config['vmid'] is not defined
+  block:
+    - name: Get VM config
+      uri:
+        url: "https://{{ proxmox_vm_api_server }}/api2/json/cluster/nextid"
+        method: GET
+        headers:  "{{ proxmox_vm_security_headers }}"
+        validate_certs: "{{ proxmox_vm_verify_certs }}"
+      register: proxmox_vm_next_vmid
+
+    - name: Set vmid to VM config
+      set_fact:
+        proxmox_vm_config: "{{ proxmox_vm_config | combine({ 'vmid' : proxmox_vm_next_vmid.json.data }) }}"
+
+- name: Fill undefined parameters in VM config with defaults
+  set_fact:
+    proxmox_vm_config: "{{ proxmox_vm_default_config | combine(proxmox_vm_config) }}"
+
+- name: Specify network cards mac addresses
+  set_fact:
+    _proxmox_vm_net_config: "{{ (_proxmox_vm_net_config | default({})) | combine({ item.key: item.value + ',macaddr=' + '42' | community.general.random_mac(seed=(inventory_hostname+item.key)) }) }}"
+  loop: "{{ proxmox_vm_config | dict2items | selectattr('key', 'match', '^net') | list }}"
+
+- name: Merge updated network config to main VM config
+  set_fact:
+    proxmox_vm_config: "{{ proxmox_vm_config | combine(_proxmox_vm_net_config) }}"
+
+- name: Extract proxmox node name
+  set_fact:
+    proxmox_vm_node: "{{ proxmox_vm_config['node'] | default('localhost') }}"
+
+- name: Remove node name from proxmox_vm_config
+  set_fact:
+    proxmox_vm_config: "{{ proxmox_vm_config | combine({ 'node': omit }) }}"
+
+- name: List VMs
+  uri:
+    url: "https://{{ proxmox_vm_api_server }}/api2/json/nodes/{{ proxmox_vm_node }}/qemu"
+    method: GET
+    headers:  "{{ proxmox_vm_security_headers }}"
+    validate_certs: "{{ proxmox_vm_verify_certs }}"
+  register: proxmox_vm_vms
+
+- name: Create VM
+  uri:
+    url: "https://{{ proxmox_vm_api_server }}/api2/json/nodes/{{ proxmox_vm_node }}/qemu"
+    method: POST
+    headers:  "{{ proxmox_vm_security_headers }}"
+    body: "{{ proxmox_vm_config }}"
+    body_format: json
+    status_code: 200
+    validate_certs: "{{ proxmox_vm_verify_certs }}"
+  register: result
+  changed_when: true
+  when: "{{ proxmox_vm_config.name not in (proxmox_vm_vms.json.data | json_query('[].name')) }}"
+
+- name: Update existing VM
+  when: "{{ proxmox_vm_config.name in (proxmox_vm_vms.json.data | json_query('[].name')) }}"
+  block:
+    - name: Get VM config
+      uri:
+        url: "https://{{ proxmox_vm_api_server }}/api2/json/nodes/{{ proxmox_vm_node }}/qemu/{{ proxmox_vm_config.vmid }}/config"
+        method: GET
+        headers:  "{{ proxmox_vm_security_headers }}"
+        validate_certs: "{{ proxmox_vm_verify_certs }}"
+      register: proxmox_vm_initial_config
+
+    - set_fact: Change disk format to match update API specification
+        proxmox_vm_config_for_update: "{{ (proxmox_vm_config_for_update | default({})) | combine({ item.key: (item.value | regex_replace('^([a-zA-Z-_.]+):([0-9]+)', (proxmox_vm_initial_config.json.data[item.key].split(','))[0] + ',size=\\2' )) }) }}"
+      loop: "{{ proxmox_vm_config | dict2items | selectattr('key', 'match', '^(sata|scsi|virtio)[0-9]') | list }}"
+
+    - name: Update VM
+      uri:
+        url: "https://{{ proxmox_vm_api_server }}/api2/json/nodes/{{ proxmox_vm_node }}/qemu/{{ proxmox_vm_config.vmid }}/config"
+        method: POST
+        headers:  "{{ proxmox_vm_security_headers }}"
+        body: "{{ proxmox_vm_config | combine(proxmox_vm_config_for_update) }}"
+        body_format: json
+        status_code: 200
+        validate_certs: "{{ proxmox_vm_verify_certs }}"
+      register: result
+
+    - name: Get VM config
+      uri:
+        url: "https://{{ proxmox_vm_api_server }}/api2/json/nodes/{{ proxmox_vm_node }}/qemu/{{ proxmox_vm_config.vmid }}/config"
+        method: GET
+        headers:  "{{ proxmox_vm_security_headers }}"
+        validate_certs: "{{ proxmox_vm_verify_certs }}"
+      register: proxmox_vm_final_config
+
+    - name:
+      set_fact:
+        proxmox_vm_initial_config_filtered: "{{ proxmox_vm_initial_config.json.data | combine({ 'digest': omit }) }}"
+        proxmox_vm_final_config_filtered: "{{ proxmox_vm_final_config.json.data | combine({ 'digest': omit }) }}"
+
+    - name: Notify user configuration changed
+      debug:
+        msg: "Configuration changed"
+      when: proxmox_vm_initial_config_filtered != proxmox_vm_final_config_filtered
+      changed_when: true
