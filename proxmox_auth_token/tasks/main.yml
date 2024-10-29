@@ -1,0 +1,14 @@
+- name: Get authentication ticket
+  uri:
+    url: "https://{{ proxmox_vm_api_server }}/api2/json/access/ticket"
+    method: POST
+    body: "username={{ proxmox_vm_login_username }}&password={{ proxmox_vm_login_password }}"
+    headers:
+      Content-Type: application/x-www-form-urlencoded
+    body_format: raw
+    validate_certs: false
+  register: _proxmox_vm_auth_result
+
+- name: Set security headers
+  set_fact:
+    proxmox_vm_security_headers: "{{ { 'cookie': _proxmox_vm_auth_result.json.data.ticket | regex_replace('^','PVEAuthCookie=') , 'CSRFPreventionToken': _proxmox_vm_auth_result.json.data.CSRFPreventionToken } }}"
